@@ -1,5 +1,6 @@
 
 rm(list=ls())
+set.seed(1234)
 ### reading custom functions
 source("Functions.R")
 ### reading packages (if not installed, automatically install)
