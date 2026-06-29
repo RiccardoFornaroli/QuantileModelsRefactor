@@ -452,5 +452,6 @@ for (i in 1:length(Metrics)) {
 }
 
 # SALVATAGGIO DEFINITIVO DI TUTTO L'AMBIENTE
-save(results, modelli_pronti, file = "Tutto_Pronto_Per_Grafici.RData")
+# save(results, modelli_pronti, file = "Tutto_Pronto_Per_Grafici.RData")
+write.csv(results, "results/original_results.csv", row.names = FALSE)
 

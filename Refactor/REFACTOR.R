@@ -259,8 +259,16 @@ for(i in seq_along(Metrics)) {
 ############################################################
 # 10. SAVE OUTPUT
 ############################################################
+# 
+# save(results,
+#      var_final,
+#      modelli_pronti,
+#      file = "REFRACTOR_models.RData")
 
-save(results,
-     var_final,
-     modelli_pronti,
-     file = "REFRACTOR_models.RData")
+write.csv(results, "results/refactor_results.csv", row.names = FALSE)
+
+if (exists("cv_table")) {
+  write.csv(cv_table,
+            "results/refactor_cv.csv",
+            row.names = FALSE)
+}

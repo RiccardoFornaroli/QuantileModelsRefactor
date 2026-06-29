@@ -12,9 +12,13 @@ library(rmarkdown)
 # 1. LOAD RESULTS
 ############################################################
 
-load("results/original.RData"); res_orig <- results
-load("results/refactor.RData"); res_ref  <- results
-load("results/improved.RData"); res_imp  <- results
+res_orig <- read.csv("results/original_results.csv")
+res_ref  <- read.csv("results/refactor_results.csv")
+res_imp  <- read.csv("results/improved_results.csv")
+
+cv_table <- read.csv("results/cv_table_improved.csv")
+var_final <- read.csv("results/var_final_improved.csv")
+formulas  <- read.csv("results/formulas_improved.csv")
 
 
 ############################################################

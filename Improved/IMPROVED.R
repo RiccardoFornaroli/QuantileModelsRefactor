@@ -299,7 +299,28 @@ for(i in seq_along(Metrics)) {
 # 11. SAVE
 ############################################################
 
-save(results,
-     var_final,
-     modelli_pronti,
-     file="IMPROVED_quantile_models.RData")
+# save(results,
+#      var_final,
+#      modelli_pronti,
+#      file="IMPROVED_quantile_models.RData")
+# SALVATAGGIO VAR FINAL
+write.csv(var_final,
+          "results/var_final_improved.csv",
+          row.names = FALSE)
+
+# SALVATAGGIO CV (se esiste nel tuo script)
+if (exists("cv_table")) {
+  write.csv(cv_table,
+            "results/cv_table_improved.csv",
+            row.names = FALSE)
+}
+
+# SALVATAGGIO FORMULE
+formulas <- data.frame(
+  Metric = names(var_final),
+  Formula = sapply(var_final, function(x) deparse(x$Formula))
+)
+
+write.csv(formulas,
+          "results/formulas_improved.csv",
+          row.names = FALSE)

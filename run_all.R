@@ -1,12 +1,12 @@
-
 set.seed(1234)
 
+dir.create("results", showWarnings = FALSE)
+
 source("Original/Script_2026.R")
-save(results, file="results/original.RData")
+write.csv(results, "results/original_results.csv", row.names = FALSE)
 
 source("Refactor/REFACTOR.R")
-save(results, file="results/refactor.RData")
+write.csv(results, "results/refactor_results.csv", row.names = FALSE)
 
 source("Improved/IMPROVED.R")
-save(results, file="results/improved.RData")
-
+write.csv(results, "results/improved_results.csv", row.names = FALSE)
