@@ -4,6 +4,8 @@
 
 rm(list=ls())
 
+set.seed(1234)
+
 source("Functions.R")
 
 set.seed(1234)

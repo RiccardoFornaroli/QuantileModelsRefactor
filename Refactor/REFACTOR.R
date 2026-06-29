@@ -4,6 +4,8 @@
 
 rm(list=ls())
 
+set.seed(1234)
+
 source("Functions.R")
 
 packages <- c("Hmisc","quantreg","fmsb","Amelia","sm")
