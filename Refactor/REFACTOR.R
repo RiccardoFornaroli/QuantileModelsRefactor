@@ -35,7 +35,7 @@ tmp <- which(lapply(packages, require, character.only = TRUE) == FALSE)
 if(length(tmp) > 0) install.packages(packages[tmp])
 lapply(packages, require, character.only = TRUE)
 
-dati <- read.table("METRICS_2026_LB_OK.csv", header=TRUE, sep=",")
+dati <- read.table("data/METRICS_2026_LB_OK.csv", header=TRUE, sep=",")
 
 dati[,c(6,7)] <- rm_outlier_15iqr(dati[,c(6,7)])
 dati <- na.omit(dati)

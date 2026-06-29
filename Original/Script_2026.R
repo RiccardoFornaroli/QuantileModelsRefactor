@@ -2,7 +2,7 @@
 rm(list=ls())
 set.seed(1234)
 ### reading custom functions
-source("Functions.R")
+source("Original/Functions.R")
 ### reading packages (if not installed, automatically install)
 package.list <- c("Hmisc","quantreg","fmsb","Amelia","sm")
 tmp.install <- which(lapply(package.list, require, character.only = TRUE)==FALSE)
@@ -10,7 +10,7 @@ if(length(tmp.install)>0) install.packages(package.list[tmp.install])
 lapply(package.list, require, character.only = TRUE)
 
 ### loading data
-dati<-read.table("METRICS_2026_LB_OK.csv",header=T, sep = ",", na.string=c("NA"))
+dati<-read.table("data/METRICS_2026_LB_OK.csv",header=T, sep = ",", na.string=c("NA"))
 summary(dati)
 names(dati)
 dati[,c(6,7)]<-rm_outlier_15iqr(dati[,c(6,7)]) ## calcola i quantili di velocità e depth
