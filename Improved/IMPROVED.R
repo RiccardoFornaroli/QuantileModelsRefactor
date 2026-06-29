@@ -6,6 +6,8 @@ rm(list=ls())
 
 source("Functions.R")
 
+set.seed(1234)
+
 packages <- c("Hmisc","quantreg","fmsb","Amelia","sm")
 
 tau_shape <- seq(0.02, 0.98, 0.02)
