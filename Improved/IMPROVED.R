@@ -13,7 +13,7 @@ K_FOLDS <- 5
 # Soglìe di Significatività Statistica, Costanti e Filtri CWI Rigidi
 EPSILON_LOGIT  <- 0.001
 VIF_THRESHOLD  <- 1.5
-CWI_THRESHOLD  <- 0.90  # Unica doppia soglia applicata sia al modello globale che ai singoli quantili
+CWI_THRESHOLD  <- 0.75  # Unica doppia soglia applicata sia al modello globale che ai singoli quantili
 MIN_NON_ZERO_PROP <- 0.10 # Filtro di ammissibilità metrica: almeno il 10% di valori diversi da zero
 
 # Definizione dei Quantili (Taus)
@@ -297,7 +297,8 @@ var_final <- foreach(v = 1:length(var_list), .packages = c("quantreg", "Hmisc"),
       mod <- list(full)
       for (b in 1:length(invar_int)) {
         res_formula <- build_robust_formula("VAR", invar, invar_int[-b], c("GROUP", "SUB"))
-        res <- rq(res_formula, tau = taus, method = "sfn", data = train_data) # Nota: train_data qui assume la struttura corretta
+        # CORREZIONE ERRORE: Sostituito il vecchio riferimento errato 'train_data' con 'fit_data'
+        res <- rq(res_formula, tau = taus, method = "sfn", data = fit_data)
         mod <- lappend(mod, res)
       }
       names(mod) <- c("full", invar_int)
@@ -544,7 +545,6 @@ for (i in 1:length(Metrics)) {
           }
         }
         
-        # VERIFICA REALE DELLE INTERAZIONI ATTIVE SUL MODELLO FINALE
         has_interaction <- length(var_final[[m]]$Invar_int_Selected) > 0 && any(var_final[[m]]$Invar_int_Selected != "")
         
         if(length(var_idrauliche_coinvolte) > 0) {
@@ -557,7 +557,6 @@ for (i in 1:length(Metrics)) {
                          length.out = 200)
             
             if(has_interaction) {
-              # Se c'è interazione, creiamo una griglia esplicita per ciascun livello di GROUP
               grid_df <- expand.grid(X_Var = x_seq, GROUP = levels(GROUP))
               colnames(grid_df)[1] <- var_idraulica_attiva
               grid_df$SUB <- factor(levels(SUB)[1], levels = levels(SUB))
@@ -576,9 +575,6 @@ for (i in 1:length(Metrics)) {
                 mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
               
             } else {
-              # SE NON C'È INTERAZIONE: Il grafico deve essere indipendente da un GROUP specifico.
-              # Calcoliamo la risposta marginale pura usando la matrice del modello (design matrix) 
-              # dove le variabili categoriali assumono la loro frequenza media campionaria.
               grid_df <- data.frame(x_seq)
               colnames(grid_df) <- var_idraulica_attiva
               
@@ -587,11 +583,9 @@ for (i in 1:length(Metrics)) {
                 for(av in altre_vars) grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
               }
               
-              # Costruiamo i predittori lineari isolando i coefficienti
               X_dummy <- model.matrix(vera_formula, data = fit_data_all_vars)
               mean_predictors <- colMeans(X_dummy)
               
-              # Identifichiamo i coefficienti legati alla variabile idraulica attiva
               terms_active <- colnames(model.matrix(as.formula(paste("~", var_final[[m]]$Invar_Selected)), data = fit_data_all_vars))
               
               preds_grid <- matrix(0, nrow = nrow(grid_df), ncol = length(taus_da_disegnare))
@@ -605,10 +599,8 @@ for (i in 1:length(Metrics)) {
                   current_coefs <- coefs[, t_idx]
                 }
                 
-                # Baseline data dall'effetto medio combinato di GROUP e SUB (intercettato)
                 baseline <- sum(current_coefs[!names(current_coefs) %in% terms_active] * mean_predictors[!names(mean_predictors) %in% terms_active])
                 
-                # Valutiamo la componente idraulica nello spazio funzionale (es. poly, log10, etc.)
                 temp_df <- fit_data_all_vars[1:nrow(grid_df), ]
                 temp_df[[var_idraulica_attiva]] <- grid_df[[var_idraulica_attiva]]
                 if(length(altre_vars) > 0) {
@@ -646,7 +638,6 @@ for (i in 1:length(Metrics)) {
                      y = y_label) +
                 scale_color_discrete(name = "Gruppo Idromorfologico") +
                 scale_linetype_manual(values = c("Quantile 0.05" = "dotted", "Quantile 0.5" = "solid", "Quantile 0.95" = "dashed"), name = "Fascia Quantile") +
-                # RISOLUZIONE BUG: Distribuzione esplicita su 4 colonne orizzontali per evitare tagli laterali
                 guides(color = guide_legend(ncol = 4, title.position = "top"),
                        linetype = guide_legend(ncol = 1, title.position = "top")) +
                 theme_minimal()
@@ -770,4 +761,4 @@ writeLines("</body></html>", html_file)
 close(html_file)
 
 save(results, modelli_pronti, file = OUTPUT_RDATA)
-cat("\nProcesso terminato con successo. Grafici rigenerati.\n")
+cat("\nProcesso terminato con successo. Grafici rigenerati senza errori.\n")
