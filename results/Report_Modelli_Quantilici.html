@@ -19,7 +19,7 @@
   img { max-width: 100%; height: auto; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 </style></head><body>
 <h1>Report Quantile Regression & CWI Strict Double-Filtering</h1>
-<p>Generato in data: 2026-06-30 17:15:24.967693 | <strong>Filtro CWI &ge; 0.9</strong> | <strong>Soglia Presenza Metrica &ge; 10%</strong></p><hr>
+<p>Generato in data: 2026-06-30 17:32:52.477449 | <strong>Filtro CWI &ge; 0.75</strong> | <strong>Soglia Presenza Metrica &ge; 10%</strong></p><hr>
 <h2>1. Metriche Idonee Analizzate</h2>
 <div class='metric-card'>
 <h3>Metrica: Asellidae</h3>
@@ -64,13 +64,18 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0404</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.8597)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8597)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.295)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9596)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8115)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9596)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8115)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/Baetidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Baetidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: Caenidae</h3>
@@ -97,11 +102,11 @@
 <tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0866</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5559)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0878</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5552)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9134)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9134)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9122)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9122)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -233,11 +238,11 @@
 <tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0592</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.624)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0644</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6206)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9408)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9408)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9356)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9356)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -303,11 +308,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0058</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4971)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4971)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4971)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4971)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0108</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4946)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4946)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4946)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4946)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -337,11 +342,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0565</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4718)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4718)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4718)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4718)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0512</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4744)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4744)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4744)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4744)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -355,13 +360,15 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP + GROUP</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0524</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.8146)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8146)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6401)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9476)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9476)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9476)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9476)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/Leuctridae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: Limnephilidae</h3>
@@ -473,11 +480,11 @@
 <tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0307</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6502)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0351</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6472)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9693)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9693)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9649)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9649)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -507,11 +514,11 @@
 <tr><th>Interazioni Attive</th><td>(log10(DEPTH)):GROUP</td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(DEPTH) + (log10(DEPTH)):GROUP + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0836</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4858)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9164)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7705)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9164)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0463</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5055)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9537)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8019)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9537)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -524,11 +531,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0302</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4849)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4849)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4849)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4849)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0227</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4887)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4887)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4887)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4887)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -609,11 +616,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0292</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4854)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4854)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4854)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4854)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0291</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4855)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4855)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4855)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4855)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -626,11 +633,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0081</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.496)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.496)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.496)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.496)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0076</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4962)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4962)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4962)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4962)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -683,13 +690,18 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + exp(DEPTH) + GROUP</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1168</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.8818)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8736)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8832)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8832)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8818)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8736)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8832)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8832)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/EPT_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/EPT_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: EPT_prop</h3>
@@ -701,7 +713,7 @@
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0234</td></tr>
 <tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9419)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8844)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8844)</td></tr>
 <tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9766)</td></tr>
 <tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9766)</td></tr>
 </table></div>
@@ -811,11 +823,11 @@
 <tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + DEPTH + (log10(VEL)):GROUP + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0548</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9452)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9452)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9452)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9452)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0505</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9495)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9495)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9495)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9495)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <div class='image-container'>
@@ -834,13 +846,15 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(DEPTH) + GROUP</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0307</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7745)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.7745)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.365)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.905)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9691)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.905)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9691)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/SHANNON_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: ASPT</h3>
@@ -891,11 +905,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0693</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4653)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4653)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4653)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4653)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0635</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4682)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4682)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4682)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4682)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -909,13 +923,15 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + GROUP + SUB</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0239</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.8055)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8055)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6302)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9502)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9761)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9502)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9761)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/FUN_DIVERSITY_ALL_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: FUN_RICHNESS_ECO</h3>
@@ -925,11 +941,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0598</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4701)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4701)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4701)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4701)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0491</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4755)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4755)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4755)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4755)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
@@ -943,13 +959,15 @@
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + GROUP + SUB</code></td></tr>
 <tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0376</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7896)</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.7896)</td></tr>
 <tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.5087)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9387)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9624)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9387)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9624)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
-<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>
+<div class='image-container'>
+<img src='plots/FUN_DIVERSITY_ECO_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
 </div></div></div>
 <div class='metric-card'>
 <h3>Metrica: FUN_RICHNESS_BIO</h3>
@@ -1015,11 +1033,11 @@
 <tr><th>Interazioni Attive</th><td></td></tr>
 <tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
 <tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + DEPTH + GROUP + SUB</code></td></tr>
-<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0682</td></tr>
-<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.596)</td></tr>
-<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.1661)</td></tr>
-<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9259)</td></tr>
-<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4119)</td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0655</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5977)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.1665)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9286)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4131)</td></tr>
 </table></div>
 <div class='plots-wrapper'>
 <p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.90.</p>

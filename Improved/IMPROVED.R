@@ -13,7 +13,7 @@ K_FOLDS <- 5
 # Soglìe di Significatività Statistica, Costanti e Filtri CWI Rigidi
 EPSILON_LOGIT  <- 0.001
 VIF_THRESHOLD  <- 1.5
-CWI_THRESHOLD  <- 0.75  # Unica doppia soglia applicata sia al modello globale che ai singoli quantili
+CWI_THRESHOLD  <- 0.90  # Unica doppia soglia applicata sia al modello globale che ai singoli quantili
 MIN_NON_ZERO_PROP <- 0.10 # Filtro di ammissibilità metrica: almeno il 10% di valori diversi da zero
 
 # Definizione dei Quantili (Taus)
@@ -115,7 +115,7 @@ Models <- list(
   LIN_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + INVARy * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   LOG_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + log10(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   EXP_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + exp(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
-  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = fit_data, method = "sfn", data = fit_data) }
+  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) }
 )
 names(Models) <- c("null", "SBS_GRP", "LIN_SBS_GRP", "LOG_SBS_GRP", "EXP_SBS_GRP", 
                    "QUA_SBS_GRP", "LIN_SBS_GRP_INT", "LOG_SBS_GRP_INT", "EXP_SBS_GRP_INT", "QUA_SBS_GRP_INT")
@@ -297,7 +297,7 @@ var_final <- foreach(v = 1:length(var_list), .packages = c("quantreg", "Hmisc"),
       mod <- list(full)
       for (b in 1:length(invar_int)) {
         res_formula <- build_robust_formula("VAR", invar, invar_int[-b], c("GROUP", "SUB"))
-        res <- rq(res_formula, tau = taus, method = "sfn", data = fit_data)
+        res <- rq(res_formula, tau = taus, method = "sfn", data = train_data) # Nota: train_data qui assume la struttura corretta
         mod <- lappend(mod, res)
       }
       names(mod) <- c("full", invar_int)
@@ -510,7 +510,7 @@ write.csv(results, OUTPUT_CSV_PATH, row.names = FALSE)
 write.csv(tabellone_export, OUTPUT_SUMMARY_CSV_PATH, row.names = FALSE)
 
 ################################################################################
-# 7. GENERAZIONE PLOT CON TRASFORMAZIONE LOGIT INVERSA (ANTILOGIT 0-1)
+# 7. GENERAZIONE PLOT CON CORREZIONE DELLA LEGENDA E DEL PARALLELISMO
 ################################################################################
 modelli_pronti <- list()
 saved_plots <- list() 
@@ -544,6 +544,7 @@ for (i in 1:length(Metrics)) {
           }
         }
         
+        # VERIFICA REALE DELLE INTERAZIONI ATTIVE SUL MODELLO FINALE
         has_interaction <- length(var_final[[m]]$Invar_int_Selected) > 0 && any(var_final[[m]]$Invar_int_Selected != "")
         
         if(length(var_idrauliche_coinvolte) > 0) {
@@ -556,34 +557,76 @@ for (i in 1:length(Metrics)) {
                          length.out = 200)
             
             if(has_interaction) {
+              # Se c'è interazione, creiamo una griglia esplicita per ciascun livello di GROUP
               grid_df <- expand.grid(X_Var = x_seq, GROUP = levels(GROUP))
               colnames(grid_df)[1] <- var_idraulica_attiva
+              grid_df$SUB <- factor(levels(SUB)[1], levels = levels(SUB))
+              
+              altre_vars <- colnames(Variables_ST)[colnames(Variables_ST) != var_idraulica_attiva]
+              if(length(altre_vars) > 0) {
+                for(av in altre_vars) grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
+              }
+              
+              preds_grid <- as.data.frame(predict(modelli_pronti[[m]], newdata = grid_df))
+              colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
+              plot_df <- cbind(grid_df, preds_grid)
+              
+              plot_long <- plot_df %>%
+                pivot_longer(cols = starts_with("Tau_"), names_to = "Quantile", values_to = "Prediction") %>%
+                mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
+              
             } else {
+              # SE NON C'È INTERAZIONE: Il grafico deve essere indipendente da un GROUP specifico.
+              # Calcoliamo la risposta marginale pura usando la matrice del modello (design matrix) 
+              # dove le variabili categoriali assumono la loro frequenza media campionaria.
               grid_df <- data.frame(x_seq)
               colnames(grid_df) <- var_idraulica_attiva
-              grid_df$GROUP <- factor(levels(GROUP)[1], levels = levels(GROUP))
-            }
-            
-            altre_vars <- colnames(Variables_ST)[colnames(Variables_ST) != var_idraulica_attiva]
-            if(length(altre_vars) > 0) {
-              for(av in altre_vars) {
-                grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
+              
+              altre_vars <- colnames(Variables_ST)[colnames(Variables_ST) != var_idraulica_attiva]
+              if(length(altre_vars) > 0) {
+                for(av in altre_vars) grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
               }
+              
+              # Costruiamo i predittori lineari isolando i coefficienti
+              X_dummy <- model.matrix(vera_formula, data = fit_data_all_vars)
+              mean_predictors <- colMeans(X_dummy)
+              
+              # Identifichiamo i coefficienti legati alla variabile idraulica attiva
+              terms_active <- colnames(model.matrix(as.formula(paste("~", var_final[[m]]$Invar_Selected)), data = fit_data_all_vars))
+              
+              preds_grid <- matrix(0, nrow = nrow(grid_df), ncol = length(taus_da_disegnare))
+              colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
+              
+              for(t_idx in 1:length(taus_da_disegnare)) {
+                coefs <- coef(modelli_pronti[[m]])
+                if(length(taus_da_disegnare) == 1) {
+                  current_coefs <- coefs
+                } else {
+                  current_coefs <- coefs[, t_idx]
+                }
+                
+                # Baseline data dall'effetto medio combinato di GROUP e SUB (intercettato)
+                baseline <- sum(current_coefs[!names(current_coefs) %in% terms_active] * mean_predictors[!names(mean_predictors) %in% terms_active])
+                
+                # Valutiamo la componente idraulica nello spazio funzionale (es. poly, log10, etc.)
+                temp_df <- fit_data_all_vars[1:nrow(grid_df), ]
+                temp_df[[var_idraulica_attiva]] <- grid_df[[var_idraulica_attiva]]
+                if(length(altre_vars) > 0) {
+                  for(av in altre_vars) temp_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
+                }
+                X_temp <- model.matrix(vera_formula, data = temp_df)
+                
+                active_part <- X_temp[, names(current_coefs) %in% terms_active, drop=FALSE] %*% current_coefs[names(current_coefs) %in% terms_active]
+                preds_grid[, t_idx] <- baseline + active_part
+              }
+              
+              plot_df <- cbind(grid_df, as.data.frame(preds_grid))
+              plot_long <- plot_df %>%
+                pivot_longer(cols = starts_with("Tau_"), names_to = "Quantile", values_to = "Prediction") %>%
+                mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
             }
-            
-            grid_df$SUB <- factor(levels(SUB)[1], levels = levels(SUB))
-            
-            preds_grid <- as.data.frame(predict(modelli_pronti[[m]], newdata = grid_df))
-            colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
-            
-            plot_df <- cbind(grid_df, preds_grid)
-            
-            plot_long <- plot_df %>%
-              pivot_longer(cols = starts_with("Tau_"), names_to = "Quantile", values_to = "Prediction") %>%
-              mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
             
             is_logit_metric <- grepl("^logit_", m)
-            
             if(is_logit_metric) {
               plot_long$Prediction <- (exp(plot_long$Prediction) * (1 + EPSILON_LOGIT) - EPSILON_LOGIT) / (1 + exp(plot_long$Prediction))
               plot_long$Prediction[plot_long$Prediction < 0] <- 0
@@ -598,20 +641,24 @@ for (i in 1:length(Metrics)) {
                                          color = GROUP, linetype = Quantile, group = interaction(GROUP, Quantile))) +
                 geom_line(size = 1.1) +
                 labs(title = paste("Effetto Interazione Modellizzato (CWI >= 0.90) - Metrica:", m),
-                     subtitle = paste("Curve back-transformed per gruppo idromorfologico su:", var_idraulica_attiva),
+                     subtitle = paste("Curve back-transformed condizionate per gruppo su:", var_idraulica_attiva),
                      x = paste("Variabile Idraulica:", var_idraulica_attiva),
                      y = y_label) +
-                scale_color_brewer(palette = "Set1", name = "Gruppo Idromorfologico") +
+                scale_color_discrete(name = "Gruppo Idromorfologico") +
                 scale_linetype_manual(values = c("Quantile 0.05" = "dotted", "Quantile 0.5" = "solid", "Quantile 0.95" = "dashed"), name = "Fascia Quantile") +
+                # RISOLUZIONE BUG: Distribuzione esplicita su 4 colonne orizzontali per evitare tagli laterali
+                guides(color = guide_legend(ncol = 4, title.position = "top"),
+                       linetype = guide_legend(ncol = 1, title.position = "top")) +
                 theme_minimal()
             } else {
-              p <- ggplot(plot_long, aes(x = .data[[var_idraulica_attiva]], y = Prediction, color = Quantile)) +
+              p <- ggplot(plot_long, aes(x = .data[[var_idraulica_attiva]], y = Prediction, color = Quantile, linetype = Quantile)) +
                 geom_line(size = 1.25) +
                 labs(title = paste("Andamento Quantili Convalida (CWI >= 0.90) - Metrica:", m),
-                     subtitle = paste("Modello parallelo back-transformed su:", var_idraulica_attiva),
+                     subtitle = paste("Modello Globale Marginale (Non-Group Specific) su:", var_idraulica_attiva),
                      x = paste("Variabile Idraulica:", var_idraulica_attiva),
                      y = y_label) +
-                scale_color_brewer(palette = "Dark2", name = "Quantili Validi") +
+                scale_color_manual(values = c("Quantile 0.05" = "#377eb8", "Quantile 0.5" = "#4daf4a", "Quantile 0.95" = "#e41a1c"), name = "Fascia Quantile") +
+                scale_linetype_manual(values = c("Quantile 0.05" = "dashed", "Quantile 0.5" = "solid", "Quantile 0.95" = "dashed"), name = "Fascia Quantile") +
                 theme_minimal()
             }
             
@@ -723,4 +770,4 @@ writeLines("</body></html>", html_file)
 close(html_file)
 
 save(results, modelli_pronti, file = OUTPUT_RDATA)
-cat("\nProcesso terminato con successo. Errore risolto.\n")
+cat("\nProcesso terminato con successo. Grafici rigenerati.\n")
