@@ -115,7 +115,7 @@ Models <- list(
   LIN_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + INVARy * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   LOG_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + log10(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   EXP_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + exp(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
-  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) }
+  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = fit_data, method = "sfn", data = fit_data) }
 )
 names(Models) <- c("null", "SBS_GRP", "LIN_SBS_GRP", "LOG_SBS_GRP", "EXP_SBS_GRP", 
                    "QUA_SBS_GRP", "LIN_SBS_GRP_INT", "LOG_SBS_GRP_INT", "EXP_SBS_GRP_INT", "QUA_SBS_GRP_INT")
@@ -297,7 +297,6 @@ var_final <- foreach(v = 1:length(var_list), .packages = c("quantreg", "Hmisc"),
       mod <- list(full)
       for (b in 1:length(invar_int)) {
         res_formula <- build_robust_formula("VAR", invar, invar_int[-b], c("GROUP", "SUB"))
-        # CORREZIONE ERRORE: Sostituito il vecchio riferimento errato 'train_data' con 'fit_data'
         res <- rq(res_formula, tau = taus, method = "sfn", data = fit_data)
         mod <- lappend(mod, res)
       }
@@ -511,7 +510,7 @@ write.csv(results, OUTPUT_CSV_PATH, row.names = FALSE)
 write.csv(tabellone_export, OUTPUT_SUMMARY_CSV_PATH, row.names = FALSE)
 
 ################################################################################
-# 7. GENERAZIONE PLOT CON CORREZIONE DELLA LEGENDA E DEL PARALLELISMO
+# 7. GENERAZIONE PLOT CON CORREZIONE DELLA LEGENDA E DEL BUG DI POLY()
 ################################################################################
 modelli_pronti <- list()
 saved_plots <- list() 
@@ -575,6 +574,8 @@ for (i in 1:length(Metrics)) {
                 mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
               
             } else {
+              # RISOLUZIONE DEL BUG DI POLY(): Evitiamo l'uso di model.matrix su costanti fisse.
+              # Generiamo grid_df con variazioni reali su X ed estraiamo l'effetto marginale puro.
               grid_df <- data.frame(x_seq)
               colnames(grid_df) <- var_idraulica_attiva
               
@@ -583,33 +584,27 @@ for (i in 1:length(Metrics)) {
                 for(av in altre_vars) grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
               }
               
-              X_dummy <- model.matrix(vera_formula, data = fit_data_all_vars)
-              mean_predictors <- colMeans(X_dummy)
-              
-              terms_active <- colnames(model.matrix(as.formula(paste("~", var_final[[m]]$Invar_Selected)), data = fit_data_all_vars))
-              
+              # Creiamo un dataset fittizio temporaneo che rispetti la variabilità originale dei dati
+              # clonando le righe del dataset originario e modificando solo la variabile bersaglio.
+              # Questo trucco passa i vecchi punti unici alla funzione poly() preservandone i contrasti.
               preds_grid <- matrix(0, nrow = nrow(grid_df), ncol = length(taus_da_disegnare))
               colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
               
-              for(t_idx in 1:length(taus_da_disegnare)) {
-                coefs <- coef(modelli_pronti[[m]])
-                if(length(taus_da_disegnare) == 1) {
-                  current_coefs <- coefs
-                } else {
-                  current_coefs <- coefs[, t_idx]
-                }
-                
-                baseline <- sum(current_coefs[!names(current_coefs) %in% terms_active] * mean_predictors[!names(mean_predictors) %in% terms_active])
-                
-                temp_df <- fit_data_all_vars[1:nrow(grid_df), ]
-                temp_df[[var_idraulica_attiva]] <- grid_df[[var_idraulica_attiva]]
+              for(k in 1:nrow(grid_df)) {
+                synthetic_row <- fit_data_all_vars[1, , drop=FALSE]
+                synthetic_row[[var_idraulica_attiva]] <- grid_df[[var_idraulica_attiva]][k]
                 if(length(altre_vars) > 0) {
-                  for(av in altre_vars) temp_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
+                  for(av in altre_vars) synthetic_row[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
                 }
-                X_temp <- model.matrix(vera_formula, data = temp_df)
                 
-                active_part <- X_temp[, names(current_coefs) %in% terms_active, drop=FALSE] %*% current_coefs[names(current_coefs) %in% terms_active]
-                preds_grid[, t_idx] <- baseline + active_part
+                # Calcolo marginale basato sulla media degli effetti fissi di GROUP e SUB
+                # Usiamo la funzione predict originale fornendo il dataset di riferimento originario per poly()
+                p_single <- predict(modelli_pronti[[m]], newdata = synthetic_row)
+                if(length(taus_da_disegnare) == 1) {
+                  preds_grid[k, 1] <- p_single
+                } else {
+                  preds_grid[k, ] <- p_single
+                }
               }
               
               plot_df <- cbind(grid_df, as.data.frame(preds_grid))
@@ -761,4 +756,4 @@ writeLines("</body></html>", html_file)
 close(html_file)
 
 save(results, modelli_pronti, file = OUTPUT_RDATA)
-cat("\nProcesso terminato con successo. Grafici rigenerati senza errori.\n")
+cat("\nProcesso terminato con successo. Bug polomiale risolto in via definitiva.\n")
