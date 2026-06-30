@@ -24,25 +24,30 @@ TAUS_M <- list(
 )
 
 # Paths e File di Input/Output
-INPUT_DATA_PATH  <- "data/METRICS_2026_LB_OK.csv"
-FUNCTIONS_PATH   <- "Original/Functions.R"
-OUTPUT_CSV_PATH  <- "results/optimized_results.csv"
-OUTPUT_RDATA     <- "results/Tutto_Pronto_Per_Grafici.RData"
-OUTPUT_PLOT_DIR  <- "results/plots/"
+INPUT_DATA_PATH         <- "data/METRICS_2026_LB_OK.csv"
+FUNCTIONS_PATH          <- "Original/Functions.R"
+OUTPUT_CSV_PATH         <- "results/optimized_results.csv"
+OUTPUT_SUMMARY_CSV_PATH <- "results/tabellone_modelli_significativita.csv"
+OUTPUT_HTML_PATH        <- "results/Report_Modelli_Quantilici.html"
+OUTPUT_RDATA            <- "results/Tutto_Pronto_Per_Grafici.RData"
+OUTPUT_PLOT_DIR         <- "results/plots/"
 
 # Creazione cartelle di output se non esistenti
 if(!dir.exists("results")) dir.create("results")
 if(!dir.exists(OUTPUT_PLOT_DIR)) dir.create(OUTPUT_PLOT_DIR)
 
 ################################################################################
-# 1. CARICAMENTO PACCHETTI E FUNZIONI CUSTOM
+# 1. CARICAMENTO PACCHETTI, PARALLELIZZAZIONE E FUNZIONI CUSTOM
 ################################################################################
 source(FUNCTIONS_PATH)
 
-package.list <- c("Hmisc", "quantreg", "fmsb", "Amelia", "sm", "caret", "ggplot2")
+package.list <- c("Hmisc", "quantreg", "fmsb", "Amelia", "sm", "caret", "ggplot2", "foreach", "doSNOW")
 tmp.install  <- which(lapply(package.list, require, character.only = TRUE) == FALSE)
 if(length(tmp.install) > 0) install.packages(package.list[tmp.install])
 lapply(package.list, require, character.only = TRUE)
+
+# Calcolo dei core disponibili della CPU
+num_cores <- max(1, parallel::detectCores() - 1)
 
 ################################################################################
 # 2. CARICAMENTO E PRE-PROCESSING DATI
@@ -91,34 +96,46 @@ Models <- list(
   LIN_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + INVARy * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   LOG_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + log10(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
   EXP_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + exp(INVARy) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) },
-  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = taus_p, method = "sfn", data = fit_data) }
+  QUA_SBS_GRP_INT     = function(fit_data, taus_p) { rq(VAR ~ 1 + poly(INVARy, 2) * GROUP + SUB, tau = sati, method = "sfn", data = fit_data) }
 )
-
 names(Models) <- c("null", "SBS_GRP", "LIN_SBS_GRP", "LOG_SBS_GRP", "EXP_SBS_GRP", 
                    "QUA_SBS_GRP", "LIN_SBS_GRP_INT", "LOG_SBS_GRP_INT", "EXP_SBS_GRP_INT", "QUA_SBS_GRP_INT")
 NULL_Models     <- c(1:2)
 NON_NULL_Models <- (1:length(Models))[(1:length(Models)) %nin% NULL_Models]
 
 ################################################################################
-# 4. UNIVARIATE SHAPE SELECTION CON CROSS-VALIDAZIONE
+# 4. UNIVARIATE SHAPE SELECTION CON PARALLELIZZAZIONE E PROGRESS BAR
 ################################################################################
 taus <- TAUS_S
-wiSHAPE <- list()
 
-for (i in 1:length(Metrics)) {
+# Stampa forzata a console del testo descrittivo PRIMA di inizializzare il cluster
+cat("\n\n========================================================================\n")
+cat(" FASE 1: Univariate Shape Selection (Calcolo parallelo su", num_cores, "core)\n")
+cat(" Analisi delle forme funzionali ottimali con CV a", K_FOLDS, "fold per ogni metrica\n")
+cat("========================================================================\n\n")
+flush.console()
+
+# Avvio cluster specifico per doSNOW
+cl <- parallel::makeCluster(num_cores)
+doSNOW::registerDoSNOW(cl)
+
+pb_shape <- txtProgressBar(max = length(Metrics), style = 3)
+progress <- function(n) setTxtProgressBar(pb_shape, n)
+opts <- list(progress = progress)
+
+shape_results <- foreach(i = 1:length(Metrics), .packages = c("quantreg", "Hmisc"), .options.snow = opts) %dopar% {
   VAR <- Metrics[, i]
-  metric <- names(Metrics[i])
+  metric_name <- names(Metrics)[i]
   wiINVAR <- list()
+  metric_cv_values <- c()
   
   for (y in 1:ncol(Variables_ST)) {
-    perc <- ((((i - 1) * ncol(Variables_ST)) + y) / (length(Metrics) * ncol(Variables_ST))) * 100
-    cat(paste0("\rShape CV - Metric: ", i, "/", length(Metrics), " | Var: ", y, "/", ncol(Variables_ST), " | Progresso: ", round(perc, 1), "%"))
-    
     INVARy <- Variables_ST[, y]
     fit_data_all <- data.frame(VAR, INVARy, GROUP, SUB)
     fit_data_all <- fit_data_all[complete.cases(fit_data_all), ]
     
     cv_wi_list <- list()
+    fold_top_wi_vals <- c()
     
     for(f in 1:K_FOLDS) {
       test_idx <- folds[[f]]
@@ -134,19 +151,31 @@ for (i in 1:length(Metrics)) {
       if(length(fitted_model_cv) > 0) {
         meanWI_cv <- mean_wi(fitted_model_cv, taus)
         cv_wi_list[[f]] <- meanWI_cv
+        fold_top_wi_vals <- c(fold_top_wi_vals, meanWI_cv[1, 1])
       }
     }
     
     if(length(cv_wi_list) > 0) {
-      combined_wi <- cv_wi_list[[1]]
-      wiINVAR[[colnames(Variables_ST)[y]]] <- combined_wi
+      wiINVAR[[colnames(Variables_ST)[y]]] <- cv_wi_list[[1]]
+      metric_cv_values <- c(metric_cv_values, sd(fold_top_wi_vals))
     } else {
       wiINVAR[[colnames(Variables_ST)[y]]] <- NULL
+      metric_cv_values <- c(metric_cv_values, NA)
     }
   }
-  wiSHAPE[[metric]] <- wiINVAR
+  list(wiINVAR = wiINVAR, cv_stability = mean(metric_cv_values, na.rm = TRUE))
 }
-cat("\n")
+close(pb_shape)
+parallel::stopCluster(cl)
+
+# Ricostruzione liste dai risultati paralleli
+wiSHAPE <- list()
+cv_stability_list <- list()
+for(i in 1:length(Metrics)) {
+  m_name <- names(Metrics)[i]
+  wiSHAPE[[m_name]] <- shape_results[[i]]$wiINVAR
+  cv_stability_list[[m_name]] <- shape_results[[i]]$cv_stability
+}
 
 # Estrazione Forme Selezionate
 wi_selection <- list()
@@ -193,9 +222,8 @@ for (v in 1:ncol(Metrics)) {
 names(var_list) <- names(Metrics)
 
 ################################################################################
-# 5. MULTIVARIATE FITTING & STEPWISE CON FUNZIONE DI COSTRUZIONE FORMULA ROBUSTA
+# 5. MULTIVARIATE FITTING & STEPWISE IN PARALLELO CON PROGRESS BAR
 ################################################################################
-# Funzione helper interna per evitare formule malformate (stringhe vuote o + isolati)
 build_robust_formula <- function(response, main_effects, interactions, basic_covariates) {
   components <- c()
   if (length(main_effects) > 0 && any(main_effects != "")) components <- c(components, main_effects)
@@ -209,12 +237,21 @@ build_robust_formula <- function(response, main_effects, interactions, basic_cov
   }
 }
 
-var_final <- list()
-taus <- TAUS_S
+# Stampa forzata a console del testo descrittivo PRIMA del secondo blocco parallelo
+cat("\n\n========================================================================\n")
+cat(" FASE 2: Multivariate Stepwise Selection (Calcolo parallelo su", num_cores, "core)\n")
+cat(" Selezione robusta all'indietro e verifica delle interazioni con i gruppi\n")
+cat("========================================================================\n\n")
+flush.console()
 
-for (v in 1:length(var_list)) {
-  perc <- (v / length(Metrics)) * 100
-  cat(paste0("\rMultivariate Stepwise CV - Metric: ", v, "/", length(Metrics), " | Progresso: ", round(perc, 1), "%"))
+cl <- parallel::makeCluster(num_cores)
+doSNOW::registerDoSNOW(cl)
+
+pb_multi <- txtProgressBar(max = length(var_list), style = 3)
+progress_multi <- function(n) setTxtProgressBar(pb_multi, n)
+opts_multi <- list(progress = progress_multi)
+
+var_final <- foreach(v = 1:length(var_list), .packages = c("quantreg", "Hmisc"), .options.snow = opts_multi) %dopar% {
   
   var_met_final <- list()
   var_met_final[[1]] <- names(var_list)[v]
@@ -236,14 +273,12 @@ for (v in 1:length(var_list)) {
     invar_int      <- paste0("(", invar, "):GROUP")
     invar_int_iniz <- invar_int
     
-    # Formula iniziale Completa
     full_formula <- build_robust_formula("VAR", invar, invar_int, c("GROUP", "SUB"))
     full <- rq(full_formula, tau = taus, method = "sfn", data = fit_data)
     mod  <- list(full)
     names(mod) <- c("start")
     meanWI     <- mean_wi(mod, taus)
     
-    # Backward Stepwise Interazioni
     while (rownames(meanWI)[1] != "full" && length(invar_int) > 1) {
       mod <- list(full)
       for (b in 1:length(invar_int)) {
@@ -270,7 +305,6 @@ for (v in 1:length(var_list)) {
     all_int <- if(length(invar_int) == length(invar_int_iniz)) TRUE else FALSE
     invar_to_mantain <- which(invar_int_iniz %in% invar_int)
     
-    # Selezione Variabili Principali
     full_formula <- build_robust_formula("VAR", invar, invar_int, c("GROUP", "SUB"))
     full <- rq(full_formula, tau = taus, method = "sfn", data = fit_data)
     mod  <- list(full)
@@ -278,7 +312,7 @@ for (v in 1:length(var_list)) {
     meanWI     <- mean_wi(mod, taus)
     
     while (rownames(meanWI)[1] != "full" && (length(invar) - length(invar_to_mantain)) > 1 && all_int == FALSE) {
-      mod <- list(full)
+      mod = list(full)
       for (b in 1:length(invar)) {
         res_formula <- build_robust_formula("VAR", invar[-b], invar_int, c("GROUP", "SUB"))
         res <- rq(res_formula, tau = taus, method = "sfn", data = fit_data)
@@ -300,7 +334,6 @@ for (v in 1:length(var_list)) {
       if(rownames(meanWI)[1] != "full") invar <- invar[invar_to_mantain]
     }
     
-    # Selezione dei Fattori di Raggruppamento (Intercept)
     full_formula    <- build_robust_formula("VAR", invar, invar_int, c("GROUP", "SUB"))
     full            <- rq(full_formula, tau = taus, method = "sfn", data = fit_data)
     res_grp_formula <- build_robust_formula("VAR", invar, invar_int, "SUB")
@@ -341,7 +374,6 @@ for (v in 1:length(var_list)) {
     var_met_final[[6]] <- sig
     var_met_final[[7]] <- full_formula
     
-    # Modello Ridotto di riferimento
     res_formula <- if (sig == "full") as.formula("VAR ~ 1 + GROUP + SUB") else 
       if (sig == "no_group") as.formula("VAR ~ 1 + SUB") else 
         if (sig == "no_sub") as.formula("VAR ~ 1 + GROUP") else as.formula("VAR ~ 1")
@@ -353,7 +385,6 @@ for (v in 1:length(var_list)) {
     var_met_final[[8]] <- meanWI
     var_met_final[[9]] <- full
     
-    # Validazione sui tre gruppi di quantili principali
     for (i in 1:length(TAUS_M)) {
       taus_i <- TAUS_M[[i]]
       full_m <- rq(full_formula, tau = taus_i, method = "sfn", data = fit_data)
@@ -364,27 +395,43 @@ for (v in 1:length(var_list)) {
     }
     names(var_met_final) <- c("Metric", "Selected Variables", "Invar_Inizial", "Invar_Selected", "Invar_int_Selected", 
                               "Intercept_grouping", "Formula", "Significance", "Model", "Wi_floor", "Wi_median", "Wi_ceiling")
-    var_final[[names(Metrics)[v]]] <- var_met_final
+    return(var_met_final)
+  } else {
+    return(NULL)
   }
 }
-cat("\n")
+close(pb_multi)
+parallel::stopCluster(cl)
+names(var_final) <- names(Metrics)
 
-saveRDS(
-  var_final,
-  "results/improved_var_final.rds"
-)
+cat("\n\n------------------------------------------------------------------------\n")
+cat(" Elaborazione parallela completata con successo.\n")
+cat(" Generazione dei grafici e scrittura del report HTML...\n")
+cat("------------------------------------------------------------------------\n\n")
+flush.console()
+
 ################################################################################
-# 6. GENERAZIONE REPORT DI SIGNIFICATIVITÀ
+# 6. COSTRUZIONE DATASET RISULTATI E ESPORTAZIONE TABELLONE RIASSUNTIVO (CSV)
 ################################################################################
-results <- as.data.frame(matrix(ncol = 12, nrow = length(Metrics), NA))
+results <- as.data.frame(matrix(ncol = 14, nrow = length(Metrics), NA))
 names(results) <- c("Metrics", "Variables", "Interaction", "Intercept_grouping", 
-                    "Wifull", "Floor_Sig", "Wi_Floor", "Median_Sig", "Wi_Median", "Ceiling_Sig", "Wi_Ceiling", "Formula")
+                    "Wifull", "Floor_Sig", "Wi_Floor", "Median_Sig", "Wi_Median", "Ceiling_Sig", "Wi_Ceiling", 
+                    "CV_Uncertainty", "CWI_Index", "Formula")
+
+# Tabellone strutturato ad hoc richiesto dall'utente
+tabellone_export <- as.data.frame(matrix(ncol = 13, nrow = length(Metrics), NA))
+names(tabellone_export) <- c("Metrica", "Variabili_Idrauliche", "Forma_Funzionale", "Interazioni_Attive", 
+                             "Fattori_Intercetta", "Significativo_In_Almeno_Un_Quantile",
+                             "Floor_Sig_0.05", "Wi_Floor", "Median_Sig_0.50", "Wi_Median", 
+                             "Ceiling_Sig_0.95", "Wi_Ceiling", "Formula_Riferimento")
 
 for (i in 1:length(Metrics)) {
   m_name <- names(Metrics)[i]
-  results$Metrics[i] <- m_name
+  results$Metrics[i]    <- m_name
+  tabellone_export$Metrica[i] <- m_name
   
   if(!is.null(var_final[[m_name]])) {
+    # Dataset di calcolo interno standard
     results$Variables[i]          <- paste(var_final[[m_name]]$Invar_Selected, collapse = " ")
     results$Interaction[i]        <- paste(var_final[[m_name]]$Invar_int_Selected, collapse = " ")
     results$Intercept_grouping[i] <- var_final[[m_name]]$Intercept_grouping
@@ -399,47 +446,195 @@ for (i in 1:length(Metrics)) {
     results$Wi_Ceiling[i]         <- var_final[[m_name]]$Wi_ceiling["full", ][1]
     results$Ceiling_Sig[i]        <- ifelse(results$Wi_Ceiling[i] > SIG_THRESHOLD, "YES", "NO")
     
+    results$CV_Uncertainty[i]     <- cv_stability_list[[m_name]]
+    results$CWI_Index[i]          <- results$Wifull[i] * (1 - results$CV_Uncertainty[i])
     results$Formula[i]            <- paste(deparse(var_final[[m_name]]$Formula), collapse = "")
+    
+    # Riempimento del Tabellone Esteso pulito per Excel/CSV
+    raw_shape_info <- var_final[[m_name]]$`Selected Variables`
+    tabellone_export$Variabili_Idrauliche[i] <- paste(raw_shape_info$Variable, collapse = "; ")
+    tabellone_export$Forma_Funzionale[i]     <- paste(raw_shape_info$Shape, collapse = "; ")
+    
+    interazioni_attive_testo <- var_final[[m_name]]$Invar_int_Selected
+    tabellone_export$Interazioni_Attive[i]  <- if(length(interazioni_attive_testo) > 0 && any(interazioni_attive_testo != "")) {
+      paste(gsub("[:\\(\\)]", "", interazioni_attive_testo), collapse = "; ")
+    } else { "Nessuna" }
+    
+    tabellone_export$Fattori_Intercetta[i]  <- var_final[[m_name]]$Intercept_grouping
+    
+    tabellone_export$Floor_Sig_0.05[i]      <- results$Floor_Sig[i]
+    tabellone_export$Wi_Floor[i]            <- round(results$Wi_Floor[i], 4)
+    
+    tabellone_export$Median_Sig_0.50[i]     <- results$Median_Sig[i]
+    tabellone_export$Wi_Median[i]           <- round(results$Wi_Median[i], 4)
+    
+    tabellone_export$Ceiling_Sig_0.95[i]    <- results$Ceiling_Sig[i]
+    tabellone_export$Wi_Ceiling[i]          <- round(results$Wi_Ceiling[i], 4)
+    
+    any_sig <- (results$Floor_Sig[i] == "YES" || results$Median_Sig[i] == "YES" || results$Ceiling_Sig[i] == "YES")
+    tabellone_export$Significativo_In_Almeno_Un_Quantile[i] <- ifelse(any_sig, "SI", "NO")
+    tabellone_export$Formula_Riferimento[i]                 <- results$Formula[i]
   }
 }
 
+# Esportazione di entrambi i file CSV nelle cartelle dei risultati
 write.csv(results, OUTPUT_CSV_PATH, row.names = FALSE)
-print("--- REPORT SIGNIFICATIVITÀ GENERATO ---")
-print(head(results))
+write.csv(tabellone_export, OUTPUT_SUMMARY_CSV_PATH, row.names = FALSE)
 
 ################################################################################
-# 7. GRAFICI DEI MODELLI SIGNIFICATIVI E SALVATAGGIO
+# 7. GENERAZIONE GRAFICI RIGIDI SU COVARIATE ORDINATE ED EQUISPAZIATE
 ################################################################################
 modelli_pronti <- list()
+saved_plots <- c()
 
 for (i in 1:length(Metrics)) {
   m <- names(Metrics)[i]
-  if (!is.null(var_final[[m]]) && (results$Floor_Sig[i] == "YES" || results$Median_Sig[i] == "YES" || results$Ceiling_Sig[i] == "YES")) {
+  if (!is.null(var_final[[m]])) {
     
-    fit_data$VAR <- Metrics[, m]
-    vera_formula <- as.formula(results$Formula[i])
+    taus_da_disegnare <- c()
+    if(results$Floor_Sig[i] == "YES")   taus_da_disegnare <- c(taus_da_disegnare, 0.05)
+    if(results$Median_Sig[i] == "YES")  taus_da_disegnare <- c(taus_da_disegnare, 0.50)
+    if(results$Ceiling_Sig[i] == "YES") taus_da_disegnare <- c(taus_da_disegnare, 0.95)
     
-    modelli_pronti[[m]] <- tryCatch({
-      rq(vera_formula, tau = c(0.05, 0.50, 0.95), method = "sfn", data = fit_data)
-    }, error = function(e) { NULL })
-    
-    if(!is.null(modelli_pronti[[m]])) {
-      tryCatch({
-        preds <- predict(modelli_pronti[[m]])
-        plot_df <- data.frame(Observed = fit_data$VAR, Predicted_Med = preds[, 2], GROUP = fit_data$GROUP)
+    if(length(taus_da_disegnare) > 0) {
+      
+      # Ricostruzione e stima del modello finale globale sui dati completi
+      fit_data_all_vars <- as.data.frame(cbind(VAR = Metrics[, m], Variables_ST, GROUP, SUB))
+      vera_formula      <- as.formula(results$Formula[i])
+      
+      modelli_pronti[[m]] <- tryCatch({
+        rq(vera_formula, tau = taus_da_disegnare, method = "sfn", data = fit_data_all_vars)
+      }, error = function(e) { NULL })
+      
+      if(!is.null(modelli_pronti[[m]])) {
         
-        p <- ggplot(plot_df, aes(x = Predicted_Med, y = Observed, color = GROUP)) +
-          geom_point(alpha = 0.6) +
-          geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
-          labs(title = paste("Modello Quantilico Significativo:", m),
-               x = "Valori Predetti (Mediana tau=0.50)", y = "Valori Osservati") +
-          theme_minimal()
+        # Individuazione della variabile idraulica attiva pulita (rimuovendo poly, log10, etc.)
+        raw_string <- var_final[[m]]$Invar_Selected[1]
+        var_idraulica_attiva <- NA
+        for (col_check in colnames(Variables_ST)) {
+          if (grepl(col_check, raw_string)) {
+            var_idraulica_attiva <- col_check
+            break
+          }
+        }
         
-        ggsave(filename = paste0(OUTPUT_PLOT_DIR, m, "_significant_plot.png"), plot = p, width = 7, height = 5)
-      }, error = function(e) { message(paste("Impossibile generare il grafico per la metrica:", m)) })
+        if(!is.na(var_idraulica_attiva)) {
+          # COSTRUZIONE GRID DI PREDIZIONE ORDINATA ED EQUISPAZIATA (200 punti)
+          x_seq <- seq(min(Variables_ST[[var_idraulica_attiva]], na.rm=TRUE), 
+                       max(Variables_ST[[var_idraulica_attiva]], na.rm=TRUE), 
+                       length.out = 200)
+          
+          grid_df <- as.data.frame(matrix(ncol = ncol(Variables_ST), nrow = 200, NA))
+          colnames(grid_df) <- colnames(Variables_ST)
+          grid_df[[var_idraulica_attiva]] <- x_seq
+          
+          # Fissaggio delle altre variabili idrauliche sulla loro mediana campionaria
+          altre_vars <- colnames(Variables_ST)[colnames(Variables_ST) != var_idraulica_attiva]
+          if(length(altre_vars) > 0) {
+            for(av in altre_vars) {
+              grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
+            }
+          }
+          
+          # Fissaggio dei fattori sui livelli di riferimento più frequenti (o mediani)
+          grid_df$GROUP <- factor(levels(GROUP)[1], levels = levels(GROUP))
+          grid_df$SUB   <- factor(levels(SUB)[1], levels = levels(SUB))
+          
+          # Calcolo delle predizioni pulite lungo la sequenza ordinata
+          preds_grid <- as.data.frame(predict(modelli_pronti[[m]], newdata = grid_df))
+          colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
+          
+          plot_df <- data.frame(X_Var = x_seq)
+          plot_df <- cbind(plot_df, preds_grid)
+          
+          # Plotting geometrico puro (Senza geom_point)
+          p <- ggplot(plot_df, aes(x = X_Var)) +
+            labs(title = paste("Andamento Quantili Significativi - Metrica:", m),
+                 x = paste("Variabile Idraulica:", var_idraulica_attiva),
+                 y = "Valore Atteso Metrica") +
+            theme_minimal() +
+            theme(legend.position = "bottom")
+          
+          for(tau_curr in taus_da_disegnare) {
+            col_name <- paste0("Tau_", tau_curr)
+            p <- p + geom_line(aes(y = .data[[col_name]], color = col_name), size = 1.2)
+          }
+          
+          p <- p + scale_color_brewer(palette = "Set1", name = "Quantili Sgn.")
+          fig_path <- paste0(OUTPUT_PLOT_DIR, m, "_curve_plot.png")
+          ggsave(filename = fig_path, plot = p, width = 7, height = 5)
+          saved_plots[m] <- fig_path
+        }
+      }
     }
   }
 }
 
+################################################################################
+# 8. GENERAZIONE REPORT HTML AUTOMATICO NATIVO
+################################################################################
+html_file <- file(OUTPUT_HTML_PATH, "w", encoding = "UTF-8")
+writeLines("<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Report Modelli Quantilici Ottimizzati</title>", html_file)
+writeLines("<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+  h1, h2 { color: #2c3e50; }
+  .metric-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
+  th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+  th { background-color: #e9ecef; color: #495057; }
+  tr:nth-child(even) { background-color: #f1f3f5; }
+  .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+  .badge-yes { background-color: #d4edda; color: #155724; }
+  .badge-no { background-color: #f8d7da; color: #721c24; }
+  .flex-container { display: flex; flex-wrap: wrap; gap: 20px; }
+  .table-container { flex: 1; min-width: 500px; }
+  .image-container { flex: 1; min-width: 400px; text-align: center; }
+  img { max-width: 100%; height: auto; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+</style></head><body>", html_file)
+
+writeLines("<h1>Report Quantile Regression & Cross-Validation Stability (High-Speed Mode)</h1>", html_file)
+writeLines(paste("<p>Generato in data:", Sys.time(), " | Fold Cross-Validazione k =", K_FOLDS, "</p><hr>"), html_file)
+
+for(i in 1:nrow(results)) {
+  m <- results$Metrics[i]
+  if(is.na(results$Wifull[i])) next
+  
+  is_sig <- (results$Floor_Sig[i] == "YES" || results$Median_Sig[i] == "YES" || results$Ceiling_Sig[i] == "YES")
+  
+  writeLines("<div class='metric-card'>", html_file)
+  writeLines(paste0("<h2>Metrica: ", m, "</h2>"), html_file)
+  writeLines("<div class='flex-container'><div class='table-container'>", html_file)
+  
+  writeLines("<table>", html_file)
+  writeLines(paste0("<tr><th>Variabili Selezionate</th><td>", results$Variables[i], "</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Interazioni Attive</th><td>", results$Interaction[i], "</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Modello Intercetta</th><td>", results$Intercept_grouping[i], "</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Formula di Riferimento</th><td><code>", results$Formula[i], "</code></td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Peso Informativo (Wifull)</th><td>", round(results$Wifull[i], 4), "</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Incertezza CV (&sigma;)</th><td>", round(results$CV_Uncertainty[i], 4), "</td></tr>"), html_file)
+  writeLines(paste0("<tr><th><strong>Indice Composto CWI</strong></th><td><strong>", round(results$CWI_Index[i], 4), "</strong></td></tr>"), html_file)
+  
+  badge_floor  = paste0("<span class='badge ", ifelse(results$Floor_Sig[i] == "YES", "badge-yes", "badge-no"), "'>", results$Floor_Sig[i], "</span>")
+  badge_median = paste0("<span class='badge ", ifelse(results$Median_Sig[i] == "YES", "badge-yes", "badge-no"), "'>", results$Median_Sig[i], "</span>")
+  badge_ceil   = paste0("<span class='badge ", ifelse(results$Ceiling_Sig[i] == "YES", "badge-yes", "badge-no"), "'>", results$Ceiling_Sig[i], "</span>")
+  
+  writeLines(paste0("<tr><th>Significatività Floor (0.05)</th><td>", badge_floor, " (Wi: ", round(results$Wi_Floor[i],4), ")</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Significatività Mediana (0.50)</th><td>", badge_median, " (Wi: ", round(results$Wi_Median[i],4), ")</td></tr>"), html_file)
+  writeLines(paste0("<tr><th>Significatività Ceiling (0.95)</th><td>", badge_ceil, " (Wi: ", round(results$Wi_Ceiling[i],4), ")</td></tr>"), html_file)
+  writeLines("</table></div>", html_file)
+  
+  writeLines("<div class='image-container'>", html_file)
+  if(is_sig && m %in% names(saved_plots)) {
+    writeLines(paste0("<img src='plots/", basename(saved_plots[m]), "' alt='Grafico Quantili Significativi'>"), html_file)
+  } else {
+    writeLines("<p style='color:#777; padding-top:40px;'>Nessun quantile significativo individuato. Grafico non generato.</p>", html_file)
+  }
+  writeLines("</div></div></div>", html_file)
+}
+
+writeLines("</body></html>", html_file)
+close(html_file)
+
 save(results, modelli_pronti, file = OUTPUT_RDATA)
-print(paste("Processo completato senza errori. Ambiente salvato in:", OUTPUT_RDATA))
+cat("\nProcesso completato con successo.\n")
+cat("Tabellone CSV esportato in:", OUTPUT_SUMMARY_CSV_PATH, "\n")
