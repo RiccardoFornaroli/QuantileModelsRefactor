@@ -369,6 +369,10 @@ for (v in 1:length(var_list)) {
 }
 cat("\n")
 
+saveRDS(
+  var_final,
+  "results/improved_var_final.rds"
+)
 ################################################################################
 # 6. GENERAZIONE REPORT DI SIGNIFICATIVITÀ
 ################################################################################
