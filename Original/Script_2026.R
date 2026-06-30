@@ -459,6 +459,10 @@ for (i in 1:length(Metrics)) {
 write.csv(results, "results/original_results.csv", row.names = FALSE)
 
 saveRDS(
+  wiSHAPE,
+  "results/original_wiSHAPE.rds"
+)
+saveRDS(
   var_final,
   "results/original_var_final.rds"
 )

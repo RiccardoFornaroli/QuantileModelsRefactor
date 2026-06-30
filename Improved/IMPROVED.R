@@ -1,5 +1,5 @@
 ############################################################
-# IMPROVED 3.0 - QUANTILE PIPELINE + MULTIVARIATE CV
+# IMPROVED 3.0 - QUANTILE PIPELINE + MULTIVARIATE CV + PLOTS
 ############################################################
 
 rm(list = ls())
@@ -14,6 +14,9 @@ invisible(lapply(packages, function(p){
   library(p, character.only = TRUE)
 }))
 
+dir.create("results", showWarnings = FALSE)
+dir.create("results/plots", showWarnings = FALSE)
+
 ############################################################
 # SETTINGS
 ############################################################
@@ -21,14 +24,13 @@ invisible(lapply(packages, function(p){
 TAUS_SHAPE <- seq(0.02, 0.98, 0.02)
 
 TAUS_GROUPS <- list(
-  Floor=seq(0.02, 0.10, length.out = 20),
-  Median=seq(0.45, 0.55, length.out = 20),
-  Ceiling=seq(0.90, 0.98, length.out = 20)
+  Floor   = seq(0.02, 0.10, length.out = 20),
+  Median  = seq(0.45, 0.55, length.out = 20),
+  Ceiling = seq(0.90, 0.98, length.out = 20)
 )
 
 EPS <- 0.001
-
-B_BOOT <- 50   # bootstrap reps (puoi alzare a 100)
+B_BOOT <- 50
 
 ############################################################
 # SAFE FUNCTIONS
@@ -52,6 +54,11 @@ fit_rq <- function(formula, data, tau = TAUS_SHAPE){
   rq(formula, tau = tau, method = "sfn", data = data)
 }
 
+pb_step <- function(pb, i, total, label = ""){
+  setTxtProgressBar(pb, i)
+  cat(sprintf("\r[%s] %d/%d", label, i, total))
+}
+
 ############################################################
 # DATA
 ############################################################
@@ -68,7 +75,6 @@ SUB <- dati$SUB
 
 Metrics <- dati[,10:ncol(dati)]
 Variables_ST <- abs(dati[,c(6,7)])
-
 Variables_ST$VEL[Variables_ST$VEL == 0] <- 0.001
 
 fine_tass <- which(names(Metrics)=="Viviparidae")
@@ -85,22 +91,35 @@ Metrics$OCH_abu <- log10(Metrics$OCH_abu + 1)
 Metrics$ABUNDANCE <- log10(Metrics$ABUNDANCE + 1)
 
 ############################################################
-# SHAPE SELECTION (WITH CV)
+# SHAPE SELECTION (WITH CV + PROGRESS)
 ############################################################
 
-wiSHAPE <- lapply(seq_along(Metrics), function(i){
+wiSHAPE <- vector("list", length(Metrics))
+names(wiSHAPE) <- names(Metrics)
+
+pb1 <- txtProgressBar(min = 0, max = length(Metrics), style = 3)
+message("SHAPE SELECTION START")
+
+for(i in seq_along(Metrics)){
+  
+  pb2 <- txtProgressBar(min = 0, max = ncol(Variables_ST), style = 3)
+  message(sprintf("Metric %s (%d/%d)", names(Metrics)[i], i, length(Metrics)))
   
   VAR <- Metrics[,i]
+  wiINVAR <- list()
   
-  lapply(Variables_ST, function(INVAR){
+  for(y in 1:ncol(Variables_ST)){
     
-    df <- na.omit(data.frame(VAR, INVAR, GROUP, SUB))
+    pb_step(pb2, y, ncol(Variables_ST), "ShapeVar")
+    
+    INVARy <- Variables_ST[,y]
+    df <- na.omit(data.frame(VAR, INVARy, GROUP, SUB))
     
     fits <- list(
-      LIN = fit_rq(VAR ~ INVAR + GROUP + SUB, df),
-      LOG = fit_rq(VAR ~ log10(INVAR) + GROUP + SUB, df),
-      EXP = fit_rq(VAR ~ exp(INVAR) + GROUP + SUB, df),
-      QUA = fit_rq(VAR ~ poly(INVAR,2) + GROUP + SUB, df)
+      LIN = fit_rq(VAR ~ INVARy + GROUP + SUB, df),
+      LOG = fit_rq(VAR ~ log10(INVARy) + GROUP + SUB, df),
+      EXP = fit_rq(VAR ~ exp(INVARy) + GROUP + SUB, df),
+      QUA = fit_rq(VAR ~ poly(INVARy,2) + GROUP + SUB, df)
     )
     
     wi_list <- lapply(fits, function(f){
@@ -108,12 +127,23 @@ wiSHAPE <- lapply(seq_along(Metrics), function(i){
     })
     
     base <- sapply(wi_list, function(x) safe_val(x["full",1]))
-    
     cv <- compute_cv(base)
     
-    data.frame(BASE = base, CV = cv)
-  })
-})
+    wiINVAR[[y]] <- data.frame(BASE = base, CV = cv)
+  }
+  
+  names(wiINVAR) <- colnames(Variables_ST)
+  wiSHAPE[[i]] <- wiINVAR
+  
+  close(pb2)
+  setTxtProgressBar(pb1, i)
+}
+
+close(pb1)
+
+############################################################
+# VARIABLE SELECTION
+############################################################
 
 score_shape <- function(x){
   b <- safe_val(x$BASE)
@@ -130,14 +160,11 @@ pick_var <- function(shape_list){
 }
 
 var_list <- lapply(seq_along(Metrics), function(i){
-  
-  best_var <- pick_var(wiSHAPE[[i]])
-  
-  data.frame(Variable = best_var, Shape = "LIN")
+  data.frame(Variable = pick_var(wiSHAPE[[i]]), Shape = "LIN")
 })
 
 ############################################################
-# MULTIVARIATE MODEL (BASE)
+# MULTIVARIATE MODELS
 ############################################################
 
 build_model <- function(i){
@@ -146,27 +173,35 @@ build_model <- function(i){
   invar <- var_list[[i]]$Variable
   
   df <- data.frame(VAR, Variables_ST, GROUP, SUB)
-  
   int <- paste0("(",invar,"):GROUP")
   
-  full_formula <- as.formula(
+  formula <- as.formula(
     paste("VAR ~ 1 +", invar, "+", int, "+ GROUP + SUB")
   )
   
-  full <- fit_rq(full_formula, df)
+  full <- fit_rq(formula, df)
   res  <- fit_rq(VAR ~ GROUP + SUB, df)
   
   list(
-    formula = full_formula,
+    formula = formula,
     full = full,
     res = res,
     wi = mean_wi(list(full=full,res=res), TAUS_SHAPE)
   )
 }
 
-var_final <- lapply(seq_along(Metrics), build_model)
+pb3 <- txtProgressBar(min=0, max=length(Metrics), style=3)
+message("MULTIVARIATE FIT START")
 
+var_final <- vector("list", length(Metrics))
 names(var_final) <- names(Metrics)
+
+for(i in seq_along(Metrics)){
+  var_final[[i]] <- build_model(i)
+  setTxtProgressBar(pb3, i)
+}
+
+close(pb3)
 
 ############################################################
 # RESULTS TABLE
@@ -191,85 +226,90 @@ results <- do.call(rbind, lapply(seq_along(var_final), function(i){
 }))
 
 ############################################################
-# 🔥 MULTIVARIATE CV (BOOTSTRAP STABILITY)
+# BOOTSTRAP CV
 ############################################################
 
-cv_model <- function(i){
+pb4 <- txtProgressBar(min=0, max=length(Metrics), style=3)
+message("BOOTSTRAP CV START")
+
+model_cv <- numeric(length(Metrics))
+
+for(i in seq_along(Metrics)){
   
   VAR <- Metrics[[i]]
   invar <- var_list[[i]]$Variable
   
   df <- data.frame(VAR, Variables_ST, GROUP, SUB)
   
-  int <- paste0("(",invar,"):GROUP")
-  
   formula <- as.formula(
-    paste("VAR ~ 1 +", invar, "+", int, "+ GROUP + SUB")
+    paste("VAR ~ 1 +", invar, "+ (",invar,"):GROUP + GROUP + SUB")
   )
   
-  boot_wi <- replicate(B_BOOT, {
+  boot <- replicate(B_BOOT, {
     
-    idx <- sample(1:nrow(df), replace = TRUE)
+    idx <- sample(nrow(df), replace=TRUE)
     d <- df[idx,]
     
-    m <- tryCatch(
-      rq(formula, tau = TAUS_SHAPE, data = d),
-      error = function(e) NULL
-    )
+    m <- tryCatch(rq(formula, tau=TAUS_SHAPE, data=d),
+                  error=function(e) NULL)
     
     if(is.null(m)) return(NA_real_)
     
-    w <- mean_wi(list(m), TAUS_SHAPE)
-    safe_val(w["full",1])
+    safe_val(mean_wi(list(m), TAUS_SHAPE)["full",1])
   })
   
-  compute_cv(boot_wi)
+  model_cv[i] <- compute_cv(boot)
+  
+  setTxtProgressBar(pb4, i)
 }
 
-model_cv <- sapply(seq_along(Metrics), cv_model)
+close(pb4)
 
 ############################################################
-# STABILITY SUMMARY
+# PLOTS (ONLY SIGNIFICANT MODELS)
 ############################################################
 
-stability <- data.frame(
-  Metric = names(Metrics),
-  Model_CV = model_cv
-)
+pb5 <- txtProgressBar(min=0, max=nrow(results), style=3)
+message("PLOT GENERATION START")
 
-############################################################
-# MODELS FOR PLOTS
-############################################################
-
-modelli_pronti <- lapply(seq_along(var_final), function(i){
+for(i in seq_len(nrow(results))){
+  
+  pb_step(pb5, i, nrow(results), "Plots")
+  
+  if(!(results$Floor_Sig[i]=="YES" ||
+       results$Median_Sig[i]=="YES" ||
+       results$Ceiling_Sig[i]=="YES")) next
   
   df <- data.frame(VAR = Metrics[[i]], Variables_ST, GROUP, SUB)
   
-  if(
-    isTRUE(results$Floor_Sig[i]=="YES" ||
-           results$Median_Sig[i]=="YES" ||
-           results$Ceiling_Sig[i]=="YES")
-  ){
-    tryCatch(
-      fit_rq(var_final[[i]]$formula,
-             df,
-             tau = c(0.05,0.5,0.95)),
-      error = function(e) NULL
-    )
-  } else NULL
-})
+  m <- tryCatch(
+    fit_rq(var_final[[i]]$formula, df, tau=c(0.05,0.5,0.95)),
+    error=function(e) NULL
+  )
+  
+  if(is.null(m)) next
+  
+  png(paste0("results/plots/plot_", names(Metrics)[i], ".png"),
+      width=1200, height=800)
+  
+  plot(m)
+  
+  title(main=paste("Metric:", names(Metrics)[i],
+                   "\nVariable:", var_list[[i]]$Variable))
+  
+  dev.off()
+}
 
-names(modelli_pronti) <- names(Metrics)
+close(pb5)
 
 ############################################################
 # SAVE EVERYTHING
 ############################################################
 
-dir.create("results", showWarnings = FALSE)
+stability <- data.frame(Metric=names(Metrics), Model_CV=model_cv)
 
-write.csv(results, "results/improved3_results.csv", row.names = FALSE)
-write.csv(stability, "results/improved3_stability.csv", row.names = FALSE)
+write.csv(results, "results/improved3_results.csv", row.names=FALSE)
+write.csv(stability, "results/improved3_stability.csv", row.names=FALSE)
 
 saveRDS(var_final, "results/improved3_var_final.rds")
-saveRDS(modelli_pronti, "results/improved3_models.rds")
 saveRDS(model_cv, "results/improved3_model_cv.rds")
