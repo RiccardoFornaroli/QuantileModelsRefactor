@@ -12,9 +12,8 @@ library(rmarkdown)
 ############################################################
 
 orig <- read.csv("results/original_results.csv")
-ref  <- read.csv("results/refactor_results.csv")
+# ref  <- read.csv("results/refactor_results.csv")
 imp  <- read.csv("results/improved_results.csv")
-imp2 <- read.csv("results/improved2_results.csv")
 
 ############################################################
 # 2. STANDARDIZE COLUMN NAMES
@@ -34,15 +33,14 @@ standardize <- function(df, name) {
 }
 
 orig <- standardize(orig, "ORIGINAL")
-ref  <- standardize(ref, "REFACTOR")
+# ref  <- standardize(ref, "REFACTOR")
 imp  <- standardize(imp, "IMPROVED")
-imp2 <- standardize(imp2, "IMPROVED2")
 
 ############################################################
 # 3. MERGE ALL RESULTS
 ############################################################
 
-all_results <- bind_rows(orig, ref, imp, imp2)
+all_results <- bind_rows(orig, imp)
 
 ############################################################
 # 4. METRIC-LEVEL SUMMARY
@@ -57,12 +55,12 @@ summary_table <- all_results %>%
   )
 
 ############################################################
-# 5. CV COMPARISON (ONLY IMPROVED2 HAS CV)
+# 5. CV COMPARISON (ONLY IMPROVED HAS CV)
 ############################################################
 
-if("CV_full" %in% colnames(imp2)) {
+if("CV_full" %in% colnames(imp)) {
   
-  cv_table <- imp2 %>%
+  cv_table <- imp %>%
     mutate(
       CV_gain = CV_null - CV_full,
       CV_relative = (CV_null - CV_full) / abs(CV_null + 1e-8)
@@ -81,7 +79,7 @@ if("CV_full" %in% colnames(imp2)) {
 best_models <- all_results %>%
   mutate(
     Score = case_when(
-      Model == "IMPROVED2" ~ -CV_full,   # min CV = best
+      Model == "IMPROVED" ~ -CV_full,   # min CV = best
       TRUE ~ -1  # placeholder per altri
     )
   ) %>%
