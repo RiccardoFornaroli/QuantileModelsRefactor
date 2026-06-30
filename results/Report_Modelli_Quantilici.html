@@ -1,0 +1,1383 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Report Modelli Quantilici Rigorosi</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+  h1, h2 { color: #2c3e50; }
+  .metric-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
+  .metric-card-excluded { background: #fdf3f3; padding: 15px; border-radius: 8px; border-left: 5px solid #dc3545; margin-bottom: 15px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
+  th, td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+  th { background-color: #e9ecef; color: #495057; }
+  tr:nth-child(even) { background-color: #f1f3f5; }
+  .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+  .badge-yes { background-color: #d4edda; color: #155724; }
+  .badge-no { background-color: #f8d7da; color: #721c24; }
+  .badge-ex { background-color: #e2e3e5; color: #383d41; }
+  .flex-container { display: flex; flex-direction: column; gap: 20px; }
+  .table-container { width: 100%; }
+  .plots-wrapper { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; margin-top: 15px; }
+  .image-container { flex: 1; min-width: 380px; max-width: 49%; text-align: center; background: #fafafa; border: 1px solid #eee; padding: 10px; border-radius: 6px; }
+  img { max-width: 100%; height: auto; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+</style></head><body>
+<h1>Report Quantile Regression & CWI Strict Double-Filtering</h1>
+<p>Generato in data: 2026-06-30 18:42:47.312 | <strong>Filtro CWI &ge; 0.75</strong> | <strong>Soglia Presenza Metrica &ge; 10%</strong></p><hr>
+<h2>1. Metriche Idonee Analizzate</h2>
+<div class='metric-card'>
+<h3>Metrica: Asellidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.014</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.493)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Athericidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0373</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4814)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4814)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4814)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4814)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Baetidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + (log10(DEPTH)):GROUP +     GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0628</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9372)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9372)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9372)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9372)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Baetidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Baetidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Caenidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + (log10(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1218</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6471)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8284)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8739)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8782)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Ceratopogonidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1018</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6289)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8982)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8982)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Chironomidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL DEPTH</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + DEPTH + (VEL):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0671</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6861)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9329)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7901)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9329)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Dugesiidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + log10(DEPTH) + (exp(VEL)):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0959</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9015)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9041)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9041)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9041)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Dugesiidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Dugesiidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Elmidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0756</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9244)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9244)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9244)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9244)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Elmidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Elmidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Empididae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(DEPTH) + (exp(DEPTH)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0706</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6108)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9294)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9293)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Ephemerellidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + (exp(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.07</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6037)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 1e-04)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.919)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.93)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Erpobdellidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.024</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.488)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.488)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.488)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.488)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Gammaridae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP (exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + exp(DEPTH) + (exp(VEL)):GROUP + (exp(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0982</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8147)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9018)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9018)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9018)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Gammaridae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Gammaridae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Glossosomatidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + (exp(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0825</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6427)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9175)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9175)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Heptageniidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0933</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9067)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9067)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9067)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9067)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Heptageniidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Heptageniidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Hydraenidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0994</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7053)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9006)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9006)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Hydropsychidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + (log10(DEPTH)):GROUP +     GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.103</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8033)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6407)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.897)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.897)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Hydropsychidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Hydropsychidae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Hydroptilidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + exp(DEPTH) + (log10(VEL)):GROUP + (exp(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0777</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7258)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9223)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9223)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Leptoceridae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0209</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4896)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4896)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4896)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4896)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Leptophlebiidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + exp(DEPTH) + (log10(VEL)):GROUP + (exp(DEPTH)):GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0714</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4643)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7325)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9286)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Leuctridae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0812</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8269)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6866)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9188)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9188)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Leuctridae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Leuctridae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Limnephilidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0213</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4893)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4893)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4893)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4893)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Limoniidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0636</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6554)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9364)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9364)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Lumbricidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + (log10(DEPTH)):GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1036</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5358)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8964)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8964)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Lumbriculidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_group</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0647</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4676)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4676)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4676)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4676)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Lymnaeidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.072</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.464)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.464)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.464)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.464)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Naididae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(DEPTH) + (exp(DEPTH)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0972</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4537)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.0584)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6645)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9028)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Nemouridae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + log10(DEPTH) + (exp(VEL)):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0646</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8412)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9354)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9354)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Nemouridae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/Nemouridae_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Physidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.018</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.491)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.491)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.491)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.491)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Polycentropodidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(DEPTH) + (log10(DEPTH)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1377</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7396)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8623)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8601)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8623)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Psychodidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(DEPTH) + (log10(DEPTH)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1025</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.549)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8965)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8975)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Psychomyiidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>DEPTH</td></tr>
+<tr><th>Interazioni Attive</th><td>(DEPTH):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + DEPTH + (DEPTH):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0892</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.7287)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9108)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9108)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Rhyacophilidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + (VEL):GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.056</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8431)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 4e-04)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.944)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.944)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/Rhyacophilidae_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Sericostomatidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + (log10(VEL)):GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0682</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5504)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.93)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9318)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Simuliidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + exp(DEPTH) + (exp(VEL)):GROUP + GROUP +     SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0536</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6708)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9464)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9464)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Sphaeriidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + (log10(VEL)):GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0795</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4602)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.3727)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9205)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Tabanidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.02</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.49)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.49)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.49)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.49)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: Tubificidae</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_group</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.014</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.493)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.493)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: RICHNESS</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL DEPTH</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + DEPTH + (VEL):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.075</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.925)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.925)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.925)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.925)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/RICHNESS_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/RICHNESS_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: EPT</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) poly(DEPTH,2)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + poly(DEPTH, 2) + (log10(VEL)):GROUP +     GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0807</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9193)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9193)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9193)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9193)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/EPT_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/EPT_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: EPT_prop</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>poly(VEL,2) poly(DEPTH,2)</td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + poly(VEL, 2) + poly(DEPTH, 2) + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0557</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9384)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9038)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9443)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9443)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/EPT_prop_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/EPT_prop_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: EPT_abu</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + log10(DEPTH) + (VEL):GROUP + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0619</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9381)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9381)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9381)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9381)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/EPT_abu_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/EPT_abu_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: OCH</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + (log10(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1094</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8015)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7309)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8906)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8906)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/OCH_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/OCH_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: OCH_prop</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + GROUP +     SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1478</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.7663)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.7816)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8522)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8522)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/OCH_prop_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/OCH_prop_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: OCH_abu</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP (log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + (log10(DEPTH)):GROUP +     GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1708</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8292)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8292)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8292)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8292)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/OCH_abu_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/OCH_abu_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: EPT_EPTOCH</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + (log10(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0837</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8241)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9163)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9163)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7264)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/EPT_EPTOCH_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: ABUNDANCE</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) DEPTH</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + DEPTH + (log10(VEL)):GROUP + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0684</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9316)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9316)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9316)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9316)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/ABUNDANCE_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/ABUNDANCE_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: SHANNON</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + exp(DEPTH) + (log10(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0657</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9266)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9343)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.934)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9343)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/SHANNON_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/SHANNON_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: ASPT</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) poly(DEPTH,2)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + poly(DEPTH, 2) + (exp(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0784</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9216)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9216)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9216)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9216)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/ASPT_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/ASPT_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: LIFE</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL exp(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(VEL):GROUP (exp(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + exp(DEPTH) + (VEL):GROUP + (exp(DEPTH)):GROUP +     GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.071</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.929)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.929)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.929)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.929)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/LIFE_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/LIFE_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_RICHNESS_ALL</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(exp(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + log10(DEPTH) + (exp(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1111</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.5343)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 8e-04)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8889)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8889)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_DIVERSITY_ALL</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL</td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0223</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8897)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.667)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9575)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9777)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/FUN_DIVERSITY_ALL_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_RICHNESS_ECO</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + log10(DEPTH) + (log10(VEL)):GROUP + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0915</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4558)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.7462)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9085)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_DIVERSITY_ECO</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>VEL</td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + VEL + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0279</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.8843)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.5642)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9541)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9721)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/FUN_DIVERSITY_ECO_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_RICHNESS_BIO</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(DEPTH) + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0599</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4822)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.2316)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.2324)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9401)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: FUN_DIVERSITY_BIO</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>exp(VEL) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(DEPTH)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + exp(VEL) + log10(DEPTH) + (log10(DEPTH)):GROUP + GROUP +     SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0329</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.6648)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.8692)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.809)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.9671)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: logit_EPT_prop</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>poly(VEL,2) log10(DEPTH)</td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0528</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.9472)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9472)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9472)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.9472)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/logit_EPT_prop_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/logit_EPT_prop_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: logit_OCH_prop</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td>log10(VEL) DEPTH</td></tr>
+<tr><th>Interazioni Attive</th><td>(log10(VEL)):GROUP</td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>full</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + log10(VEL) + DEPTH + (log10(VEL)):GROUP + GROUP + SUB</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.1077</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-yes'>YES</span> (CWI Globale: 0.7872)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.6875)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8871)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-yes'>YES</span> (CWI Quantile: 0.8923)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<div class='image-container'>
+<img src='plots/logit_OCH_prop_VEL_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+<div class='image-container'>
+<img src='plots/logit_OCH_prop_DEPTH_curve_plot.png' alt='Grafico Quantile Reale'>
+</div>
+</div></div></div>
+<div class='metric-card'>
+<h3>Metrica: logit_EPT_EPTOCH</h3>
+<div class='flex-container'><div class='table-container'>
+<table>
+<tr><th>Variabili Selezionate</th><td></td></tr>
+<tr><th>Interazioni Attive</th><td></td></tr>
+<tr><th>Modello Intercetta</th><td><span class='badge' style='background:#e2e3e5;'>no_sub</span></td></tr>
+<tr><th>Formula di Riferimento</th><td><code>VAR ~ 1 + GROUP</code></td></tr>
+<tr><th>Incertezza Totale CV (&sigma;)</th><td>0.0264</td></tr>
+<tr><th><strong>Approvazione Modello Globale</strong></th><td><span class='badge badge-no'>NO</span> (CWI Globale: 0.4868)</td></tr>
+<tr><th>Ammissibilit` Floor (0.05)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4868)</td></tr>
+<tr><th>Ammissibilit` Mediana (0.50)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4868)</td></tr>
+<tr><th>Ammissibilit` Ceiling (0.95)</th><td><span class='badge badge-no'>NO</span> (CWI Quantile: 0.4868)</td></tr>
+</table></div>
+<div class='plots-wrapper'>
+<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilit` critica di CWI &ge; 0.75.</p>
+</div></div></div>
+<hr><h2>2. Metriche Escluse Automaticamente</h2>
+<p>Le seguenti metriche presentano valori diversi da zero in una percentuale di campioni inferiore al limite richiesto del 10% e non sono state modellate per evitare bias strutturali:</p>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Acroloxidae</code> | <strong>Percentuale campioni presenti:</strong> 0.21% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Aeshnidae</code> | <strong>Percentuale campioni presenti:</strong> 1.47% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ameletidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ancylidae</code> | <strong>Percentuale campioni presenti:</strong> 7.76% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Anthomyiidae</code> | <strong>Percentuale campioni presenti:</strong> 0.84% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Apataniidae</code> | <strong>Percentuale campioni presenti:</strong> 0.63% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Aphelocheiridae</code> | <strong>Percentuale campioni presenti:</strong> 1.26% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Astacidae</code> | <strong>Percentuale campioni presenti:</strong> 0.28% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Beraeidae</code> | <strong>Percentuale campioni presenti:</strong> 3.64% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Bithyniidae</code> | <strong>Percentuale campioni presenti:</strong> 8.11% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Blephariceridae</code> | <strong>Percentuale campioni presenti:</strong> 3.71% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Brachycentridae</code> | <strong>Percentuale campioni presenti:</strong> 2.52% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Calamoceratidae</code> | <strong>Percentuale campioni presenti:</strong> 0.42% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Calopterygidae</code> | <strong>Percentuale campioni presenti:</strong> 8.88% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Cambaridae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Chloroperlidae</code> | <strong>Percentuale campioni presenti:</strong> 2.1% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Coenagrionidae</code> | <strong>Percentuale campioni presenti:</strong> 1.89% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Corbiculidae</code> | <strong>Percentuale campioni presenti:</strong> 6.08% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Cordulegastridae</code> | <strong>Percentuale campioni presenti:</strong> 3.71% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Corixidae</code> | <strong>Percentuale campioni presenti:</strong> 0.7% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Crambidae</code> | <strong>Percentuale campioni presenti:</strong> 1.89% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Culicidae</code> | <strong>Percentuale campioni presenti:</strong> 1.12% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Curculionidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dendrocoelidae</code> | <strong>Percentuale campioni presenti:</strong> 0.28% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dixidae</code> | <strong>Percentuale campioni presenti:</strong> 1.54% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dolichopodidae</code> | <strong>Percentuale campioni presenti:</strong> 0.77% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dreissenidae</code> | <strong>Percentuale campioni presenti:</strong> 9.44% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dryopidae</code> | <strong>Percentuale campioni presenti:</strong> 2.17% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Dytiscidae</code> | <strong>Percentuale campioni presenti:</strong> 7.55% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ecnomidae</code> | <strong>Percentuale campioni presenti:</strong> 0.77% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Enchytraeidae</code> | <strong>Percentuale campioni presenti:</strong> 3.08% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ephemeridae</code> | <strong>Percentuale campioni presenti:</strong> 5.66% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ephydridae</code> | <strong>Percentuale campioni presenti:</strong> 0.21% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Gerridae</code> | <strong>Percentuale campioni presenti:</strong> 5.38% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Glossiphoniidae</code> | <strong>Percentuale campioni presenti:</strong> 3.5% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Goeridae</code> | <strong>Percentuale campioni presenti:</strong> 8.39% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Gomphidae</code> | <strong>Percentuale campioni presenti:</strong> 9.86% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Gyrinidae</code> | <strong>Percentuale campioni presenti:</strong> 1.47% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Haemopidae</code> | <strong>Percentuale campioni presenti:</strong> 0.49% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Haliplidae</code> | <strong>Percentuale campioni presenti:</strong> 0.91% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Haplotaxidae</code> | <strong>Percentuale campioni presenti:</strong> 6.78% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Helophoridae</code> | <strong>Percentuale campioni presenti:</strong> 0.28% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hirudinidae</code> | <strong>Percentuale campioni presenti:</strong> 0.21% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydrachnidae</code> | <strong>Percentuale campioni presenti:</strong> 7.27% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydridae</code> | <strong>Percentuale campioni presenti:</strong> 8.81% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydrobiidae</code> | <strong>Percentuale campioni presenti:</strong> 5.87% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydrochidae</code> | <strong>Percentuale campioni presenti:</strong> 0.49% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydrometridae</code> | <strong>Percentuale campioni presenti:</strong> 0.28% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Hydrophilidae</code> | <strong>Percentuale campioni presenti:</strong> 1.96% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ichneumonidae</code> | <strong>Percentuale campioni presenti:</strong> 0.42% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Lepidostomatidae</code> | <strong>Percentuale campioni presenti:</strong> 2.52% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Lestidae</code> | <strong>Percentuale campioni presenti:</strong> 2.17% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Libellulidae</code> | <strong>Percentuale campioni presenti:</strong> 1.75% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Melanopsidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Mesoveliidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Muscidae</code> | <strong>Percentuale campioni presenti:</strong> 1.26% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Nepidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Neritidae</code> | <strong>Percentuale campioni presenti:</strong> 0.49% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Odontoceridae</code> | <strong>Percentuale campioni presenti:</strong> 3.15% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Oligoneuriidae</code> | <strong>Percentuale campioni presenti:</strong> 0.7% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Pediciidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Perlidae</code> | <strong>Percentuale campioni presenti:</strong> 5.59% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Perlodidae</code> | <strong>Percentuale campioni presenti:</strong> 8.32% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Philopotamidae</code> | <strong>Percentuale campioni presenti:</strong> 5.24% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Phryganeidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Piscicolidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Planariidae</code> | <strong>Percentuale campioni presenti:</strong> 6.57% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Planorbidae</code> | <strong>Percentuale campioni presenti:</strong> 6.78% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Platycnemididae</code> | <strong>Percentuale campioni presenti:</strong> 2.24% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Potamanthidae</code> | <strong>Percentuale campioni presenti:</strong> 1.82% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Prosopistomatidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Psephenidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Ptilocolepidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Pyralidae</code> | <strong>Percentuale campioni presenti:</strong> 0.07% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Rhagionidae</code> | <strong>Percentuale campioni presenti:</strong> 0.21% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Sciomyzidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Scirtidae</code> | <strong>Percentuale campioni presenti:</strong> 8.04% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Sialidae</code> | <strong>Percentuale campioni presenti:</strong> 0.98% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Siphlonuridae</code> | <strong>Percentuale campioni presenti:</strong> 1.12% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Stratiomyidae</code> | <strong>Percentuale campioni presenti:</strong> 7.2% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Taeniopterygidae</code> | <strong>Percentuale campioni presenti:</strong> 1.61% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Thaumaleidae</code> | <strong>Percentuale campioni presenti:</strong> 0.21% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Tipulidae</code> | <strong>Percentuale campioni presenti:</strong> 6.15% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Valvatidae</code> | <strong>Percentuale campioni presenti:</strong> 5.31% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Veliidae</code> | <strong>Percentuale campioni presenti:</strong> 0.14% (Soglia minima richiesta: 10%)
+</div>
+<div class='metric-card-excluded'>
+<strong>Metrica:</strong> <code>Viviparidae</code> | <strong>Percentuale campioni presenti:</strong> 0.42% (Soglia minima richiesta: 10%)
+</div>
+</body></html>

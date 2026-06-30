@@ -17,11 +17,17 @@ CWI_THRESHOLD  <- 0.75  # Unica doppia soglia applicata sia al modello globale c
 MIN_NON_ZERO_PROP <- 0.10 # Filtro di ammissibilità metrica: almeno il 10% di valori diversi da zero
 
 # Definizione dei Quantili (Taus)
-TAUS_S <- seq(0.02, 0.98, 0.02)
+# TAUS_S <- seq(0.02, 0.98, length.out = 97)
+# TAUS_M <- list(
+#   Floor   = seq(0.02, 0.10, length.out = 100),
+#   Median  = seq(0.45, 0.55, length.out = 100),
+#   Ceiling = seq(0.90, 0.98, length.out = 100)
+# )
+TAUS_S <- seq(0.02, 0.98, length.out = 10)
 TAUS_M <- list(
-  Floor   = seq(0.02, 0.10, length.out = 20),
-  Median  = seq(0.45, 0.55, length.out = 20),
-  Ceiling = seq(0.90, 0.98, length.out = 20)
+  Floor   = seq(0.02, 0.10, length.out = 5),
+  Median  = seq(0.45, 0.55, length.out = 5),
+  Ceiling = seq(0.90, 0.98, length.out = 5)
 )
 
 # Paths e File di Input/Output
