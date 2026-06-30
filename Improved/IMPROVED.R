@@ -33,7 +33,7 @@ OUTPUT_HTML_PATH        <- "results/Report_Modelli_Quantilici.html"
 OUTPUT_RDATA            <- "results/Tutto_Pronto_Per_Grafici.RData"
 OUTPUT_PLOT_DIR         <- "results/plots/"
 
-# Creazione cartelle di output se non esistenti
+# Creazione cartelle di output se non existenti
 if(!dir.exists("results")) dir.create("results")
 if(!dir.exists(OUTPUT_PLOT_DIR)) dir.create(OUTPUT_PLOT_DIR)
 
@@ -93,7 +93,7 @@ cat("========================================================================\n\
 # Sistemazione Variabili Idrauliche
 Variables <- dati[c(6, 7)]
 Variables <- abs(Variables)
-Variables$VEL[Variables$VEL == 0] <- 0.001
+Variables$VEL[Variables$VEL == 0] <- 0.01
 Variables_ST <- as.data.frame(Variables)
 
 GROUP <- factor(dati$GROUP)
@@ -420,7 +420,7 @@ names(var_final) <- names(Metrics)
 
 cat("\n\n------------------------------------------------------------------------\n")
 cat(" Elaborazione parallela completata con successo.\n")
-cat(" Generazione dei grafici basati sulla doppia soglia CWI >= 0.90...\n")
+cat(paste(" Generazione dei grafici basati sulla doppia soglia CWI >=", CWI_THRESHOLD, "...\n"))
 cat("------------------------------------------------------------------------\n\n")
 flush.console()
 
@@ -574,8 +574,6 @@ for (i in 1:length(Metrics)) {
                 mutate(Quantile = gsub("Tau_", "Quantile ", Quantile))
               
             } else {
-              # RISOLUZIONE DEL BUG DI POLY(): Evitiamo l'uso di model.matrix su costanti fisse.
-              # Generiamo grid_df con variazioni reali su X ed estraiamo l'effetto marginale puro.
               grid_df <- data.frame(x_seq)
               colnames(grid_df) <- var_idraulica_attiva
               
@@ -584,9 +582,6 @@ for (i in 1:length(Metrics)) {
                 for(av in altre_vars) grid_df[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
               }
               
-              # Creiamo un dataset fittizio temporaneo che rispetti la variabilità originale dei dati
-              # clonando le righe del dataset originario e modificando solo la variabile bersaglio.
-              # Questo trucco passa i vecchi punti unici alla funzione poly() preservandone i contrasti.
               preds_grid <- matrix(0, nrow = nrow(grid_df), ncol = length(taus_da_disegnare))
               colnames(preds_grid) <- paste0("Tau_", taus_da_disegnare)
               
@@ -597,8 +592,6 @@ for (i in 1:length(Metrics)) {
                   for(av in altre_vars) synthetic_row[[av]] <- median(Variables_ST[[av]], na.rm=TRUE)
                 }
                 
-                # Calcolo marginale basato sulla media degli effetti fissi di GROUP e SUB
-                # Usiamo la funzione predict originale fornendo il dataset di riferimento originario per poly()
                 p_single <- predict(modelli_pronti[[m]], newdata = synthetic_row)
                 if(length(taus_da_disegnare) == 1) {
                   preds_grid[k, 1] <- p_single
@@ -627,7 +620,7 @@ for (i in 1:length(Metrics)) {
               p <- ggplot(plot_long, aes(x = .data[[var_idraulica_attiva]], y = Prediction, 
                                          color = GROUP, linetype = Quantile, group = interaction(GROUP, Quantile))) +
                 geom_line(size = 1.1) +
-                labs(title = paste("Effetto Interazione Modellizzato (CWI >= 0.90) - Metrica:", m),
+                labs(title = paste("Effetto Interazione Modellizzato (CWI >=", CWI_THRESHOLD, ") - Metrica:", m),
                      subtitle = paste("Curve back-transformed condizionate per gruppo su:", var_idraulica_attiva),
                      x = paste("Variabile Idraulica:", var_idraulica_attiva),
                      y = y_label) +
@@ -639,7 +632,7 @@ for (i in 1:length(Metrics)) {
             } else {
               p <- ggplot(plot_long, aes(x = .data[[var_idraulica_attiva]], y = Prediction, color = Quantile, linetype = Quantile)) +
                 geom_line(size = 1.25) +
-                labs(title = paste("Andamento Quantili Convalida (CWI >= 0.90) - Metrica:", m),
+                labs(title = paste("Andamento Quantili Convalida (CWI >=", CWI_THRESHOLD, ") - Metrica:", m),
                      subtitle = paste("Modello Globale Marginale (Non-Group Specific) su:", var_idraulica_attiva),
                      x = paste("Variabile Idraulica:", var_idraulica_attiva),
                      y = y_label) +
@@ -735,7 +728,8 @@ for(i in 1:nrow(results)) {
       writeLines("</div>", html_file)
     }
   } else {
-    writeLines("<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilità critica di CWI &ge; 0.90.</p>", html_file)
+    # CORREZIONE DINAMICA RICHIESTA: Il testo ora stampa il valore esatto di CWI_THRESHOLD impostato all'inizio (0.75)
+    writeLines(paste0("<p style='color:#dc3545; padding: 15px 0; font-weight:500;'>Grafici non generati: il modello globale o i singoli quantili non hanno raggiunto la stabilità critica di CWI &ge; ", CWI_THRESHOLD, ".</p>"), html_file)
   }
   writeLines("</div></div></div>", html_file)
 }
@@ -756,4 +750,4 @@ writeLines("</body></html>", html_file)
 close(html_file)
 
 save(results, modelli_pronti, file = OUTPUT_RDATA)
-cat("\nProcesso terminato con successo. Bug polomiale risolto in via definitiva.\n")
+cat("\nProcesso terminato. Script configurato con soglia 0.75 e testi dinamici aggiornati.\n")
