@@ -53,8 +53,11 @@ SUB<-dati$SUB
 # # #CHOICE OF QUANTILES
 # taus_s<-seq(0.90,0.99,0.01)
 taus_s<-seq(0.02,0.98,0.02)
-taus_m<-list((2:10)/100,(45:55)/100,(90:98)/100)
-names(taus_m)<-c("Floor","Median","Ceiling")
+taus_m<-list(
+  Floor=seq(0.02, 0.10, length.out = 20),
+  Median=seq(0.45, 0.55, length.out = 20),
+  Ceiling=seq(0.90, 0.98, length.out = 20)
+)
 ############################################################
 #####################CHOICE OF MODELS#######################
 ############################################################
@@ -455,3 +458,7 @@ for (i in 1:length(Metrics)) {
 # save(results, modelli_pronti, file = "Tutto_Pronto_Per_Grafici.RData")
 write.csv(results, "results/original_results.csv", row.names = FALSE)
 
+saveRDS(
+  var_final,
+  "results/original_var_final.rds"
+)

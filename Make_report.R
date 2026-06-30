@@ -1,143 +1,148 @@
 ############################################################
-# FINAL REPORT: ORIGINAL vs REFACTOR vs IMPROVED
+# COMPARE RESULTS - ORIGINAL vs REFACTOR vs IMPROVED vs IMPROVED2
 ############################################################
 
-rm(list=ls())
+rm(list = ls())
 
-library(ggplot2)
+library(dplyr)
 library(rmarkdown)
-
 
 ############################################################
 # 1. LOAD RESULTS
 ############################################################
 
-res_orig <- read.csv("results/original_results.csv")
-res_ref  <- read.csv("results/refactor_results.csv")
-res_imp  <- read.csv("results/improved_results.csv")
-
-cv_table <- read.csv("results/cv_table_improved.csv")
-var_final <- read.csv("results/var_final_improved.csv")
-formulas  <- read.csv("results/formulas_improved.csv")
-
+orig <- read.csv("results/original_results.csv")
+ref  <- read.csv("results/refactor_results.csv")
+imp  <- read.csv("results/improved_results.csv")
+imp2 <- read.csv("results/improved2_results.csv")
 
 ############################################################
-# 2. COMPARISON TABLE
+# 2. STANDARDIZE COLUMN NAMES
 ############################################################
 
-comparison <- data.frame(
-  Metric = res_orig$Metrics,
+standardize <- function(df, name) {
   
-  Original = res_orig$Variables,
-  Refactor = res_ref$Variables,
-  Improved = res_imp$Variable,
-  
-  Stable_Refactor = res_orig$Variables == res_ref$Variables,
-  Stable_Improved = res_orig$Variables == res_imp$Variable
-)
+  df %>%
+    mutate(Model = name) %>%
+    select(
+      Metrics,
+      Variables,
+      Formula,
+      Model,
+      everything()
+    )
+}
 
-
-############################################################
-# 3. CV SUMMARY (IMPROVED ONLY)
-############################################################
-
-cv_summary <- data.frame(
-  Metric = res_imp$Metrics,
-  CV_error = res_imp$CV_error
-)
-
-cv_mean <- mean(cv_summary$CV_error, na.rm=TRUE)
-
+orig <- standardize(orig, "ORIGINAL")
+ref  <- standardize(ref, "REFACTOR")
+imp  <- standardize(imp, "IMPROVED")
+imp2 <- standardize(imp2, "IMPROVED2")
 
 ############################################################
-# 4. STABILITY INDEX
+# 3. MERGE ALL RESULTS
 ############################################################
 
-stability <- data.frame(
-  Version = c("Refactor","Improved"),
-  Stability = c(
-    mean(comparison$Stable_Refactor, na.rm=TRUE),
-    mean(comparison$Stable_Improved, na.rm=TRUE)
+all_results <- bind_rows(orig, ref, imp, imp2)
+
+############################################################
+# 4. METRIC-LEVEL SUMMARY
+############################################################
+
+summary_table <- all_results %>%
+  group_by(Metrics, Model) %>%
+  summarise(
+    Variables = first(Variables),
+    Formula   = first(Formula),
+    .groups = "drop"
   )
+
+############################################################
+# 5. CV COMPARISON (ONLY IMPROVED2 HAS CV)
+############################################################
+
+if("CV_full" %in% colnames(imp2)) {
+  
+  cv_table <- imp2 %>%
+    mutate(
+      CV_gain = CV_null - CV_full,
+      CV_relative = (CV_null - CV_full) / abs(CV_null + 1e-8)
+    ) %>%
+    select(Metrics, CV_full, CV_null, CV_gain, CV_relative)
+  
+} else {
+  cv_table <- NULL
+}
+
+############################################################
+# 6. BEST MODEL PER METRIC (BASED ON SIMPLE RULE)
+############################################################
+
+# regola: preferisci CV se disponibile, altrimenti Wi
+best_models <- all_results %>%
+  mutate(
+    Score = case_when(
+      Model == "IMPROVED2" ~ -CV_full,   # min CV = best
+      TRUE ~ -1  # placeholder per altri
+    )
+  ) %>%
+  group_by(Metrics) %>%
+  slice_min(order_by = Score, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(Metrics, Model, Variables, Formula)
+
+############################################################
+# 7. MODEL COUNTS (robustezza confronto)
+############################################################
+
+model_counts <- all_results %>%
+  group_by(Model) %>%
+  summarise(
+    n_metrics = n(),
+    n_unique_vars = n_distinct(Variables),
+    .groups = "drop"
+  )
+
+############################################################
+# 8. FINAL MASTER TABLE
+############################################################
+
+final_table <- list(
+  all_results = all_results,
+  summary = summary_table,
+  best_models = best_models,
+  model_counts = model_counts,
+  cv_table = cv_table
 )
 
-
 ############################################################
-# 5. PLOTS
-############################################################
-
-p1 <- ggplot(stability, aes(x=Version, y=Stability)) +
-  geom_bar(stat="identity") +
-  ylim(0,1) +
-  ggtitle("Variable Selection Stability")
-
-p2 <- ggplot(cv_summary, aes(x=Metric, y=CV_error)) +
-  geom_point() +
-  theme(axis.text.x = element_text(angle=90, hjust=1)) +
-  ggtitle("Cross-Validation Error (Improved)")
-
-
-############################################################
-# 6. SAVE FIGURES
+# 9. SAVE OUTPUTS (LIGHT + GITHUB SAFE)
 ############################################################
 
-ggsave("results/stability.png", p1, width=6, height=4)
-ggsave("results/cv.png", p2, width=10, height=5)
+dir.create("results", showWarnings = FALSE)
 
+write.csv(all_results, "results/COMPARE_all_results.csv", row.names = FALSE)
+write.csv(best_models, "results/COMPARE_best_models.csv", row.names = FALSE)
+write.csv(model_counts, "results/COMPARE_model_counts.csv", row.names = FALSE)
 
-############################################################
-# 7. WRITE REPORT FILE (RMARKDOWN)
-############################################################
+if(!is.null(cv_table)) {
+  write.csv(cv_table, "results/COMPARE_cv_table.csv", row.names = FALSE)
+}
 
-report_file <- "results/final_report.Rmd"
-
-writeLines(c(
-  "---",
-  "title: 'Quantile Models Comparison Report'",
-  "output: pdf_document",
-  "---",
-  
-  "# 1. Summary",
-  "",
-  "This report compares ORIGINAL, REFACTOR and IMPROVED pipelines.",
-  "",
-  "# 2. Stability",
-  "",
-  "```{r}",
-  "print(stability)",
-  "```",
-  
-  "# 3. Cross-validation (Improved)",
-  "",
-  "Mean CV error:",
-  "",
-  cv_mean,
-  "",
-  "```{r}",
-  "print(cv_summary)",
-  "```",
-  
-  "# 4. Key findings",
-  "",
-  "- Improved model reduces overfitting via CV",
-  "- Refactor improves computational efficiency",
-  "- Original shows highest variability",
-  "",
-  "# 5. Figures",
-  "",
-  "```{r}",
-  "knitr::include_graphics('results/stability.png')",
-  "```",
-  "",
-  "```{r}",
-  "knitr::include_graphics('results/cv.png')",
-  "```"
-), report_file)
-
+saveRDS(final_table, "results/COMPARE_full_object.rds")
 
 ############################################################
-# 8. RENDER PDF
+# 10. QUICK PRINT
 ############################################################
 
-rmarkdown::render(report_file,
-                  output_file = "FINAL_REPORT.pdf")
+print("=== MODEL COUNTS ===")
+print(model_counts)
+
+print("=== BEST MODELS (TOP 10) ===")
+print(head(best_models, 10))
+
+library(rmarkdown)
+
+rmarkdown::render(
+  input = "report_template.Rmd",
+  output_file = "results/FINAL_REPORT.html"
+)

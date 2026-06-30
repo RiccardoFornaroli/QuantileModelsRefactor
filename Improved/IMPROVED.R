@@ -1,40 +1,60 @@
 ############################################################
-# 0. GLOBAL SETTINGS
+# IMPROVED 3.0 - QUANTILE PIPELINE + MULTIVARIATE CV
 ############################################################
 
-rm(list=ls())
-
+rm(list = ls())
 set.seed(1234)
 
 source("Original/Functions.R")
 
-set.seed(1234)
-
 packages <- c("Hmisc","quantreg","fmsb","Amelia","sm")
 
-tau_shape <- seq(0.02, 0.98, 0.02)
-
-taus_floor   <- (2:10)/100
-taus_median  <- (45:55)/100
-taus_ceiling <- (90:98)/100
-
-taus_groups <- list(Floor=taus_floor,
-                    Median=taus_median,
-                    Ceiling=taus_ceiling)
-
-NULL_MODELS <- c(1,2)
-
-eps <- 0.001
-k_folds <- 5
-
+invisible(lapply(packages, function(p){
+  if(!require(p, character.only = TRUE)) install.packages(p)
+  library(p, character.only = TRUE)
+}))
 
 ############################################################
-# 1. PACKAGES + DATA
+# SETTINGS
 ############################################################
 
-tmp <- which(lapply(packages, require, character.only = TRUE)==FALSE)
-if(length(tmp)>0) install.packages(packages[tmp])
-lapply(packages, require, character.only = TRUE)
+TAUS_SHAPE <- seq(0.02, 0.98, 0.02)
+
+TAUS_GROUPS <- list(
+  Floor=seq(0.02, 0.10, length.out = 20),
+  Median=seq(0.45, 0.55, length.out = 20),
+  Ceiling=seq(0.90, 0.98, length.out = 20)
+)
+
+EPS <- 0.001
+
+B_BOOT <- 50   # bootstrap reps (puoi alzare a 100)
+
+############################################################
+# SAFE FUNCTIONS
+############################################################
+
+safe_val <- function(x){
+  if(is.null(x)) return(NA_real_)
+  if(is.data.frame(x) || is.matrix(x)) x <- as.numeric(x[1,1])
+  if(length(x) == 0) return(NA_real_)
+  if(is.na(x)) return(NA_real_)
+  as.numeric(x)
+}
+
+compute_cv <- function(vals){
+  vals <- vals[!is.na(vals)]
+  if(length(vals) < 2) return(NA_real_)
+  sd(vals)/mean(vals)
+}
+
+fit_rq <- function(formula, data, tau = TAUS_SHAPE){
+  rq(formula, tau = tau, method = "sfn", data = data)
+}
+
+############################################################
+# DATA
+############################################################
 
 dati <- read.table("data/METRICS_2026_LB_OK.csv", header=TRUE, sep=",")
 
@@ -44,283 +64,212 @@ dati <- na.omit(dati)
 dati$SUB <- factor(dati$SUB)
 
 GROUP <- dati$GROUP
-SUB   <- dati$SUB
-
-
-############################################################
-# 2. METRICS + TRANSFORMATIONS
-############################################################
+SUB <- dati$SUB
 
 Metrics <- dati[,10:ncol(dati)]
-
 Variables_ST <- abs(dati[,c(6,7)])
-Variables_ST$VEL[Variables_ST$VEL==0] <- 0.001
+
+Variables_ST$VEL[Variables_ST$VEL == 0] <- 0.001
 
 fine_tass <- which(names(Metrics)=="Viviparidae")
 Metrics[,1:fine_tass] <- log10(Metrics[,1:fine_tass] + 1)
 
-logit_fun <- function(x) log((x+eps)/(1-x+eps))
+logit <- function(x) log((x+EPS)/(1-x+EPS))
 
-Metrics$logit_EPT_prop   <- logit_fun(Metrics$EPT_prop)
-Metrics$logit_OCH_prop   <- logit_fun(Metrics$OCH_prop)
-Metrics$logit_EPT_EPTOCH <- logit_fun(Metrics$EPT_EPTOCH)
+Metrics$logit_EPT_prop <- logit(Metrics$EPT_prop)
+Metrics$logit_OCH_prop <- logit(Metrics$OCH_prop)
+Metrics$logit_EPT_EPTOCH <- logit(Metrics$EPT_EPTOCH)
 
-Metrics$EPT_abu   <- log10(Metrics$EPT_abu+1)
-Metrics$OCH_abu   <- log10(Metrics$OCH_abu+1)
-Metrics$ABUNDANCE <- log10(Metrics$ABUNDANCE+1)
-
-
-############################################################
-# 3. MODEL ENGINE
-############################################################
-
-Models <- list(
-  
-  LIN  = function(df) rq(VAR ~ INVARy + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  LOG  = function(df) rq(VAR ~ log10(INVARy) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  EXP  = function(df) rq(VAR ~ exp(INVARy) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  QUA  = function(df) rq(VAR ~ poly(INVARy,2) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  LIN_INT = function(df) rq(VAR ~ INVARy*GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  LOG_INT = function(df) rq(VAR ~ log10(INVARy)*GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  EXP_INT = function(df) rq(VAR ~ exp(INVARy)*GROUP + SUB, tau=tau_shape, method="sfn", data=df),
-  
-  QUA_INT = function(df) rq(VAR ~ poly(INVARy,2)*GROUP + SUB, tau=tau_shape, method="sfn", data=df)
-)
-
-model_names <- names(Models)
-
+Metrics$EPT_abu <- log10(Metrics$EPT_abu + 1)
+Metrics$OCH_abu <- log10(Metrics$OCH_abu + 1)
+Metrics$ABUNDANCE <- log10(Metrics$ABUNDANCE + 1)
 
 ############################################################
-# 4. CROSSVALIDATION FUNCTION (QUANTILE LOSS)
+# SHAPE SELECTION (WITH CV)
 ############################################################
 
-quantile_loss <- function(y, pred, tau) {
-  mean((tau - (y < pred)) * (y - pred))
-}
-
-
-cv_rq <- function(formula, data, tau_grid, k=5) {
-  
-  folds <- sample(rep(1:k, length.out=nrow(data)))
-  
-  errors <- c()
-  
-  for(i in 1:k){
-    
-    train <- data[folds != i,]
-    test  <- data[folds == i,]
-    
-    fit <- rq(formula, tau=tau_grid, method="sfn", data=train)
-    
-    pred <- predict(fit, newdata=test)
-    
-    err <- mean((test$VAR - pred)^2, na.rm=TRUE)
-    
-    errors <- c(errors, err)
-  }
-  
-  mean(errors)
-}
-
-
-############################################################
-# 5. SHAPE SELECTION (WI + CV)
-############################################################
-
-wiSHAPE <- vector("list", length(Metrics))
-names(wiSHAPE) <- names(Metrics)
-
-cvSHAPE <- vector("list", length(Metrics))
-names(cvSHAPE) <- names(Metrics)
-
-
-for(i in seq_along(Metrics)) {
+wiSHAPE <- lapply(seq_along(Metrics), function(i){
   
   VAR <- Metrics[,i]
   
-  wiINVAR <- list()
-  cvINVAR <- list()
-  
-  for(j in seq_along(Variables_ST)){
+  lapply(Variables_ST, function(INVAR){
     
-    INVARy <- Variables_ST[,j]
+    df <- na.omit(data.frame(VAR, INVAR, GROUP, SUB))
     
-    df <- data.frame(VAR, INVARy, GROUP, SUB)
-    df <- na.omit(df)
+    fits <- list(
+      LIN = fit_rq(VAR ~ INVAR + GROUP + SUB, df),
+      LOG = fit_rq(VAR ~ log10(INVAR) + GROUP + SUB, df),
+      EXP = fit_rq(VAR ~ exp(INVAR) + GROUP + SUB, df),
+      QUA = fit_rq(VAR ~ poly(INVAR,2) + GROUP + SUB, df)
+    )
     
-    fits <- lapply(Models, function(m) m(df))
-    names(fits) <- model_names
+    wi_list <- lapply(fits, function(f){
+      mean_wi(list(f), TAUS_SHAPE)
+    })
     
-    wi_score <- mean_wi(fits, tau_shape)
+    base <- sapply(wi_list, function(x) safe_val(x["full",1]))
     
-    # CV only for best WI model (speed optimization)
-    best_formula <- VAR ~ INVARy + GROUP + SUB
+    cv <- compute_cv(base)
     
-    cv_score <- cv_rq(best_formula, df, tau_shape, k_folds)
-    
-    wiINVAR[[j]] <- wi_score
-    cvINVAR[[j]] <- cv_score
-  }
-  
-  wiSHAPE[[i]] <- wiINVAR
-  cvSHAPE[[i]] <- cvINVAR
+    data.frame(BASE = base, CV = cv)
+  })
+})
+
+score_shape <- function(x){
+  b <- safe_val(x$BASE)
+  c <- safe_val(x$CV)
+  if(is.na(b)) return(-Inf)
+  if(is.na(c)) c <- 0
+  0.7*b + 0.3*(1-c)
 }
 
-
-############################################################
-# 6. VARIABLE SELECTION (WI + CV)
-############################################################
-
-wi_selected <- list()
-
-for(v in seq_along(Metrics)) {
-  
-  sel <- data.frame(
-    Index=1:ncol(Variables_ST),
-    Variable=colnames(Variables_ST),
-    Wi=NA,
-    CV=NA
-  )
-  
-  for(i in 1:ncol(Variables_ST)) {
-    sel$Wi[i] <- wiSHAPE[[v]][[i]][1,1]
-    sel$CV[i] <- cvSHAPE[[v]][[i]]
-  }
-  
-  # composite score: WI high + CV low
-  sel$score <- sel$Wi / (sel$CV + 1e-6)
-  
-  wi_selected[[v]] <- sel
+pick_var <- function(shape_list){
+  s <- sapply(shape_list, score_shape)
+  s[is.na(s)] <- -Inf
+  names(s)[which.max(s)]
 }
 
-names(wi_selected) <- names(Metrics)
-
+var_list <- lapply(seq_along(Metrics), function(i){
+  
+  best_var <- pick_var(wiSHAPE[[i]])
+  
+  data.frame(Variable = best_var, Shape = "LIN")
+})
 
 ############################################################
-# 7. FINAL VARIABLE CHOICE
+# MULTIVARIATE MODEL (BASE)
 ############################################################
 
-var_list <- list()
-
-for(v in seq_along(Metrics)) {
+build_model <- function(i){
   
-  sel <- wi_selected[[v]]
-  
-  best <- sel[which.max(sel$score),]
-  
-  var_list[[v]] <- data.frame(
-    Variable = best$Variable
-  )
-}
-
-names(var_list) <- names(Metrics)
-
-
-############################################################
-# 8. FINAL MODELS
-############################################################
-
-var_final <- list()
-
-for(v in seq_along(Metrics)) {
-  
-  VAR <- Metrics[,v]
-  
-  if(is.na(var_list[[v]]$Variable)) next
-  
-  INVAR <- var_list[[v]]$Variable
+  VAR <- Metrics[[i]]
+  invar <- var_list[[i]]$Variable
   
   df <- data.frame(VAR, Variables_ST, GROUP, SUB)
   
-  formula <- as.formula(
-    paste("VAR ~", INVAR, "+ GROUP + SUB")
+  int <- paste0("(",invar,"):GROUP")
+  
+  full_formula <- as.formula(
+    paste("VAR ~ 1 +", invar, "+", int, "+ GROUP + SUB")
   )
   
-  fit <- rq(formula, tau=tau_shape, method="sfn", data=df)
+  full <- fit_rq(full_formula, df)
+  res  <- fit_rq(VAR ~ GROUP + SUB, df)
   
-  cv_err <- cv_rq(formula, df, tau_shape, k_folds)
-  
-  var_final[[v]] <- list(
-    Metric = names(Metrics)[v],
-    Variable = INVAR,
-    Formula = formula,
-    Model = fit,
-    CV = cv_err
+  list(
+    formula = full_formula,
+    full = full,
+    res = res,
+    wi = mean_wi(list(full=full,res=res), TAUS_SHAPE)
   )
 }
+
+var_final <- lapply(seq_along(Metrics), build_model)
 
 names(var_final) <- names(Metrics)
 
-
 ############################################################
-# 9. RESULTS TABLE
-############################################################
-
-results <- data.frame(
-  Metrics = names(Metrics),
-  Variable = sapply(var_final, function(x) x$Variable),
-  CV_error = sapply(var_final, function(x) x$CV)
-)
-
-
-############################################################
-# 10. MODELS FOR PLOTS
+# RESULTS TABLE
 ############################################################
 
-modelli_pronti <- list()
-
-for(i in seq_along(Metrics)) {
+results <- do.call(rbind, lapply(seq_along(var_final), function(i){
   
-  m <- names(Metrics)[i]
+  x <- var_final[[i]]
   
-  if(!is.null(var_final[[m]])) {
+  data.frame(
+    Metrics = names(Metrics)[i],
+    Variables = var_list[[i]]$Variable,
     
-    df <- data.frame(VAR=Metrics[,m], Variables_ST, GROUP, SUB)
+    Wifull = x$wi["full",1],
     
-    modelli_pronti[[m]] <- tryCatch({
-      
-      rq(var_final[[m]]$Formula,
-         tau=c(0.05,0.5,0.95),
-         method="sfn",
-         data=df)
-      
-    }, error=function(e) NULL)
-  }
+    Floor_Sig   = ifelse(mean_wi(list(x$full,x$res), TAUS_GROUPS$Floor)["full",1] > 0.999,"YES","NO"),
+    Median_Sig  = ifelse(mean_wi(list(x$full,x$res), TAUS_GROUPS$Median)["full",1] > 0.999,"YES","NO"),
+    Ceiling_Sig = ifelse(mean_wi(list(x$full,x$res), TAUS_GROUPS$Ceiling)["full",1] > 0.999,"YES","NO"),
+    
+    Formula = paste(deparse(x$formula), collapse="")
+  )
+}))
+
+############################################################
+# 🔥 MULTIVARIATE CV (BOOTSTRAP STABILITY)
+############################################################
+
+cv_model <- function(i){
+  
+  VAR <- Metrics[[i]]
+  invar <- var_list[[i]]$Variable
+  
+  df <- data.frame(VAR, Variables_ST, GROUP, SUB)
+  
+  int <- paste0("(",invar,"):GROUP")
+  
+  formula <- as.formula(
+    paste("VAR ~ 1 +", invar, "+", int, "+ GROUP + SUB")
+  )
+  
+  boot_wi <- replicate(B_BOOT, {
+    
+    idx <- sample(1:nrow(df), replace = TRUE)
+    d <- df[idx,]
+    
+    m <- tryCatch(
+      rq(formula, tau = TAUS_SHAPE, data = d),
+      error = function(e) NULL
+    )
+    
+    if(is.null(m)) return(NA_real_)
+    
+    w <- mean_wi(list(m), TAUS_SHAPE)
+    safe_val(w["full",1])
+  })
+  
+  compute_cv(boot_wi)
 }
 
+model_cv <- sapply(seq_along(Metrics), cv_model)
 
 ############################################################
-# 11. SAVE
+# STABILITY SUMMARY
 ############################################################
 
-# save(results,
-#      var_final,
-#      modelli_pronti,
-#      file="IMPROVED_quantile_models.RData")
-# SALVATAGGIO VAR FINAL
-write.csv(var_final,
-          "results/var_final_improved.csv",
-          row.names = FALSE)
-
-# SALVATAGGIO CV (se esiste nel tuo script)
-if (exists("cv_table")) {
-  write.csv(cv_table,
-            "results/cv_table_improved.csv",
-            row.names = FALSE)
-}
-
-# SALVATAGGIO FORMULE
-formulas <- data.frame(
-  Metric = names(var_final),
-  Formula = sapply(var_final, function(x) deparse(x$Formula))
+stability <- data.frame(
+  Metric = names(Metrics),
+  Model_CV = model_cv
 )
 
-write.csv(formulas,
-          "results/formulas_improved.csv",
-          row.names = FALSE)
+############################################################
+# MODELS FOR PLOTS
+############################################################
+
+modelli_pronti <- lapply(seq_along(var_final), function(i){
+  
+  df <- data.frame(VAR = Metrics[[i]], Variables_ST, GROUP, SUB)
+  
+  if(
+    isTRUE(results$Floor_Sig[i]=="YES" ||
+           results$Median_Sig[i]=="YES" ||
+           results$Ceiling_Sig[i]=="YES")
+  ){
+    tryCatch(
+      fit_rq(var_final[[i]]$formula,
+             df,
+             tau = c(0.05,0.5,0.95)),
+      error = function(e) NULL
+    )
+  } else NULL
+})
+
+names(modelli_pronti) <- names(Metrics)
+
+############################################################
+# SAVE EVERYTHING
+############################################################
+
+dir.create("results", showWarnings = FALSE)
+
+write.csv(results, "results/improved3_results.csv", row.names = FALSE)
+write.csv(stability, "results/improved3_stability.csv", row.names = FALSE)
+
+saveRDS(var_final, "results/improved3_var_final.rds")
+saveRDS(modelli_pronti, "results/improved3_models.rds")
+saveRDS(model_cv, "results/improved3_model_cv.rds")

@@ -1,274 +1,262 @@
 ############################################################
-# 0. GLOBAL SETTINGS
+# REFRACTOR 2.0 STABLE + PROGRESS BAR (2 LEVELS)
 ############################################################
 
-rm(list=ls())
-
+rm(list = ls())
 set.seed(1234)
+
+############################################################
+# FUNCTIONS
+############################################################
 
 source("Original/Functions.R")
 
-packages <- c("Hmisc","quantreg","fmsb","Amelia","sm")
+progress_init <- function(total, label="Progress") {
+  list(
+    pb = txtProgressBar(min = 0, max = total, style = 3),
+    i = 0,
+    total = total,
+    label = label
+  )
+}
 
-tau_shape <- seq(0.02, 0.98, 0.02)
+progress_update <- function(p, msg=NULL) {
+  p$i <- p$i + 1
+  setTxtProgressBar(p$pb, p$i)
+  
+  if(!is.null(msg) && p$i %% 10 == 0){
+    cat("\n", p$label, ":", msg, "\n")
+  }
+  
+  p
+}
 
-taus_floor   <- (2:10)/100
-taus_median  <- (45:55)/100
-taus_ceiling <- (90:98)/100
+progress_close <- function(p){
+  close(p$pb)
+}
 
-taus_groups <- list(
-  Floor = taus_floor,
-  Median = taus_median,
-  Ceiling = taus_ceiling
+############################################################
+# PACKAGES
+############################################################
+
+PACKAGES <- c("Hmisc","quantreg","fmsb","Amelia","sm")
+
+missing <- PACKAGES[!sapply(PACKAGES, require, character.only=TRUE)]
+if(length(missing)>0) install.packages(missing)
+lapply(PACKAGES, library, character.only=TRUE)
+
+############################################################
+# CONSTANTS
+############################################################
+
+DATA_FILE <- "data/METRICS_2026_LB_OK.csv"
+
+EPS <- 0.001
+VEL_MIN <- 0.001
+TAUS <- seq(0.02,0.98,0.02)
+
+TAUS_GROUPS <- list(
+  Floor=seq(0.02, 0.10, length.out = 20),
+  Median=seq(0.45, 0.55, length.out = 20),
+  Ceiling=seq(0.90, 0.98, length.out = 20)
 )
 
-NULL_MODELS <- c(1,2)
-
-eps <- 0.001
-
-
 ############################################################
-# 1. PACKAGES + DATA
+# DATA
 ############################################################
 
-tmp <- which(lapply(packages, require, character.only = TRUE) == FALSE)
-if(length(tmp) > 0) install.packages(packages[tmp])
-lapply(packages, require, character.only = TRUE)
-
-dati <- read.table("data/METRICS_2026_LB_OK.csv", header=TRUE, sep=",")
+dati <- read.table(DATA_FILE, header=TRUE, sep=",", na.strings="NA")
 
 dati[,c(6,7)] <- rm_outlier_15iqr(dati[,c(6,7)])
-dati <- na.omit(dati)
+dati <- dati[complete.cases(dati),]
 
-dati$SUB <- factor(dati$SUB)
-
-GROUP <- dati$GROUP
-SUB   <- dati$SUB
-
-
-############################################################
-# 2. METRICS + TRANSFORMATIONS
-############################################################
+dati$SUB <- factor(dati$SUB, levels=levels(factor(dati$SUB))[c(1,3,2)])
+GROUP <- factor(dati$GROUP)
+SUB <- dati$SUB
 
 Metrics <- dati[,10:ncol(dati)]
-
 Variables_ST <- abs(dati[,c(6,7)])
-Variables_ST$VEL[Variables_ST$VEL == 0] <- 0.001
-
-fine_tass <- which(names(Metrics) == "Viviparidae")
-Metrics[,1:fine_tass] <- log10(Metrics[,1:fine_tass] + 1)
-
-logit_fun <- function(x) log((x + eps) / (1 - x + eps))
-
-Metrics$logit_EPT_prop   <- logit_fun(Metrics$EPT_prop)
-Metrics$logit_OCH_prop   <- logit_fun(Metrics$OCH_prop)
-Metrics$logit_EPT_EPTOCH <- logit_fun(Metrics$EPT_EPTOCH)
-
-Metrics$EPT_abu   <- log10(Metrics$EPT_abu + 1)
-Metrics$OCH_abu   <- log10(Metrics$OCH_abu + 1)
-Metrics$ABUNDANCE <- log10(Metrics$ABUNDANCE + 1)
-
+Variables_ST$VEL[Variables_ST$VEL==0] <- VEL_MIN
 
 ############################################################
-# 3. MODEL DEFINITIONS
+# MODEL LIST
 ############################################################
 
 Models <- list(
   
-  null = function(df) rq(VAR ~ 1, tau=tau_shape, method="sfn", data=df),
+  null = function(df) rq(VAR ~ 1, tau=TAUS, method="sfn", data=df),
   
-  SBS_GRP = function(df) rq(VAR ~ 1 + SUB + GROUP, tau=tau_shape, method="sfn", data=df),
+  SBS_GRP = function(df) rq(VAR ~ 1 + SUB + GROUP, tau=TAUS, method="sfn", data=df),
   
-  LIN = function(df) rq(VAR ~ INVARy + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  LIN = function(df) rq(VAR ~ 1 + INVARy + GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  LOG = function(df) rq(VAR ~ log10(INVARy) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  LOG = function(df) rq(VAR ~ 1 + log10(INVARy) + GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  EXP = function(df) rq(VAR ~ exp(INVARy) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  EXP = function(df) rq(VAR ~ 1 + exp(INVARy) + GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  QUA = function(df) rq(VAR ~ poly(INVARy,2) + GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  QUA = function(df) rq(VAR ~ 1 + poly(INVARy,2) + GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  LIN_INT = function(df) rq(VAR ~ INVARy * GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  LIN_INT = function(df) rq(VAR ~ 1 + INVARy*GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  LOG_INT = function(df) rq(VAR ~ log10(INVARy) * GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  LOG_INT = function(df) rq(VAR ~ 1 + log10(INVARy)*GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  EXP_INT = function(df) rq(VAR ~ exp(INVARy) * GROUP + SUB, tau=tau_shape, method="sfn", data=df),
+  EXP_INT = function(df) rq(VAR ~ 1 + exp(INVARy)*GROUP + SUB, tau=TAUS, method="sfn", data=df),
   
-  QUA_INT = function(df) rq(VAR ~ poly(INVARy,2) * GROUP + SUB, tau=tau_shape, method="sfn", data=df)
+  QUA_INT = function(df) rq(VAR ~ 1 + poly(INVARy,2)*GROUP + SUB, tau=TAUS, method="sfn", data=df)
 )
 
 MODEL_NAMES <- names(Models)
+NON_NULL <- 3:10
 
+fit_models <- function(df){
+  lapply(NON_NULL, function(i){
+    tryCatch(Models[[i]](df), error=function(e) NULL)
+  })
+}
 
 ############################################################
-# 4. SHAPE SELECTION (WI)
+# SHAPE SELECTION (PROGRESS LEVEL 1)
 ############################################################
 
 wiSHAPE <- vector("list", length(Metrics))
 names(wiSHAPE) <- names(Metrics)
 
-for(i in seq_along(Metrics)) {
+total_shape <- length(Metrics) * ncol(Variables_ST)
+p_shape <- progress_init(total_shape, "SHAPE SELECTION")
+
+counter <- 0
+
+for(i in seq_along(Metrics)){
   
-  VAR <- Metrics[,i]
+  VAR <- Metrics[[i]]
   
-  wiINVAR <- lapply(Variables_ST, function(INVARy) {
+  wiINVAR <- vector("list", ncol(Variables_ST))
+  
+  for(j in seq_along(Variables_ST)){
     
-    df <- data.frame(VAR, INVARy, GROUP, SUB)
-    df <- na.omit(df)
+    INVARy <- Variables_ST[[j]]
     
-    fits <- lapply(Models, function(m) m(df))
-    names(fits) <- MODEL_NAMES
+    df <- na.omit(data.frame(VAR, INVARy, GROUP, SUB))
     
-    mean_wi(fits, tau_shape)
-  })
+    models <- fit_models(df)
+    
+    wiINVAR[[j]] <- mean_wi(models, TAUS)
+    
+    counter <- counter + 1
+    p_shape <- progress_update(
+      p_shape,
+      paste(names(Metrics)[i], colnames(Variables_ST)[j])
+    )
+  }
   
   wiSHAPE[[i]] <- wiINVAR
 }
 
+progress_close(p_shape)
 
 ############################################################
-# 5. VARIABLE SELECTION
+# VARIABLE SELECTION
 ############################################################
 
-wi_selected <- list()
-
-for(v in seq_along(Metrics)) {
-  
-  sel <- data.frame(
-    Index = 1:ncol(Variables_ST),
-    Variable = colnames(Variables_ST),
-    Selected = "YES",
-    Model = NA,
-    Wi = NA
-  )
-  
-  for(i in 1:ncol(Variables_ST)) {
-    sel$Model[i] <- rownames(wiSHAPE[[v]][[i]])[1]
-    sel$Wi[i]    <- wiSHAPE[[v]][[i]][1,1]
-  }
-  
-  wi_selected[[v]] <- sel
-}
-
-names(wi_selected) <- names(Metrics)
-
-
-############################################################
-# 6. VARIABLE LIST (SHAPE + MODEL)
-############################################################
-
-var_list <- list()
-
-for(v in seq_along(Metrics)) {
-  
-  sel <- wi_selected[[v]]
-  
-  Variable <- sel$Variable[which.max(sel$Wi)]
-  Model    <- sel$Model[which.max(sel$Wi)]
-  
-  Shape <- substr(Model, 1, 4)
-  Shape <- gsub("[_M]", "", Shape)
-  
-  var_list[[v]] <- data.frame(
-    Variable = Variable,
-    Model = Model,
-    Shape = Shape
-  )
-}
-
+var_list <- vector("list", length(Metrics))
 names(var_list) <- names(Metrics)
 
-
-############################################################
-# 7. MULTIVARIATE MODELS
-############################################################
-
-var_final <- list()
-
-for(v in seq_along(Metrics)) {
+for(i in seq_along(Metrics)){
   
-  if(all(is.na(var_list[[v]]))) next
-  
-  VAR <- Metrics[[v]]
-  
-  invars <- var_list[[v]]$Variable
-  
-  fit_data <- data.frame(VAR, Variables_ST, GROUP, SUB)
-  
-  full_formula <- as.formula(
-    paste("VAR ~ 1 +",
-          paste(invars, collapse=" + "),
-          "+ GROUP + SUB")
+  sel <- data.frame(
+    Variable = names(Variables_ST),
+    Wi = NA_real_,
+    Model = NA_character_
   )
   
-  full <- rq(full_formula, tau=tau_shape, method="sfn", data=fit_data)
+  for(j in seq_along(Variables_ST)){
+    sel$Wi[j] <- wiSHAPE[[i]][[j]][1,1]
+    sel$Model[j] <- rownames(wiSHAPE[[i]][[j]])[1]
+  }
   
-  res  <- rq(VAR ~ 1 + GROUP + SUB, tau=tau_shape, method="sfn", data=fit_data)
+  best <- sel[which.max(sel$Wi),]
   
-  meanWI <- mean_wi(list(full=full, res=res), tau_shape)
-  
-  var_final[[v]] <- list(
-    Metric = names(Metrics)[v],
-    Variables = invars,
-    Formula = full_formula,
-    Model = full,
-    Wi = meanWI
+  var_list[[i]] <- data.frame(
+    Variable = best$Variable,
+    Model = best$Model,
+    Shape = substr(best$Model,1,4),
+    stringsAsFactors=FALSE
   )
 }
 
+############################################################
+# MULTIVARIATE LOOP (PROGRESS LEVEL 2)
+############################################################
+
+var_final <- vector("list", length(Metrics))
 names(var_final) <- names(Metrics)
 
+p_multi <- progress_init(length(Metrics), "MULTIVARIATE")
+
+for(i in seq_along(Metrics)){
+  
+  VAR <- Metrics[[i]]
+  
+  if(is.null(var_list[[i]])){
+    p_multi <- progress_update(p_multi)
+    next
+  }
+  
+  invar <- var_list[[i]]$Variable
+  shape <- var_list[[i]]$Shape
+  
+  if(shape=="LOG") invar <- paste0("log10(",invar,")")
+  if(shape=="EXP") invar <- paste0("exp(",invar,")")
+  if(shape=="QUA") invar <- paste0("poly(",invar,",2)")
+  
+  invar_int <- paste0("(",invar,"):GROUP")
+  
+  df <- data.frame(VAR, Variables_ST, GROUP, SUB)
+  
+  full_formula <- as.formula(
+    paste("VAR ~ 1 +", invar, "+", invar_int, "+ GROUP + SUB")
+  )
+  
+  full <- rq(full_formula, tau=TAUS, method="sfn", data=df)
+  
+  res <- rq(VAR ~ 1 + GROUP + SUB, tau=TAUS, method="sfn", data=df)
+  
+  sig <- rownames(mean_wi(list(full,res), TAUS))[1]
+  
+  var_final[[i]] <- list(
+    Formula = full_formula,
+    Sig = sig
+  )
+  
+  p_multi <- progress_update(p_multi, names(Metrics)[i])
+}
+
+progress_close(p_multi)
 
 ############################################################
-# 8. RESULTS TABLE
+# RESULTS
 ############################################################
 
 results <- data.frame(
   Metrics = names(Metrics),
-  Variables = sapply(var_final, function(x) paste(x$Variables, collapse=" ")),
-  Formula = sapply(var_final, function(x) paste(deparse(x$Formula), collapse="")),
-  stringsAsFactors = FALSE
+  Sig = NA,
+  Formula = NA
 )
 
-
-############################################################
-# 9. MODELS FOR PLOTS
-############################################################
-
-modelli_pronti <- list()
-
-for(i in seq_along(Metrics)) {
-  
-  m <- names(Metrics)[i]
-  
-  if(i %in% names(var_final)) {
-    
-    fit_data <- data.frame(VAR = Metrics[,m], Variables_ST, GROUP, SUB)
-    
-    modelli_pronti[[m]] <- tryCatch({
-      
-      rq(var_final[[m]]$Formula,
-         tau = c(0.05, 0.5, 0.95),
-         method = "sfn",
-         data = fit_data)
-      
-    }, error = function(e) NULL)
-  }
+for(i in seq_along(var_final)){
+  if(is.null(var_final[[i]])) next
+  results$Sig[i] <- var_final[[i]]$Sig
+  results$Formula[i] <- paste(deparse(var_final[[i]]$Formula), collapse="")
 }
 
+results$Sig[is.na(results$Sig)] <- "NO"
 
 ############################################################
-# 10. SAVE OUTPUT
+# SAVE
 ############################################################
-# 
-# save(results,
-#      var_final,
-#      modelli_pronti,
-#      file = "REFRACTOR_models.RData")
 
-write.csv(results, "results/refactor_results.csv", row.names = FALSE)
+dir.create("results", showWarnings=FALSE)
 
-if (exists("cv_table")) {
-  write.csv(cv_table,
-            "results/refactor_cv.csv",
-            row.names = FALSE)
-}
+saveRDS(wiSHAPE, "results/refactor_wiSHAPE.rds")
+saveRDS(var_final, "results/refactor_var_final.rds")
+write.csv(results, "results/refactor_results.csv", row.names=FALSE)
