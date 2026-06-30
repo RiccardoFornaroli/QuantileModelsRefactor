@@ -1,0 +1,145 @@
+"Metrica","Variabili_Idrauliche","Forma_Funzionale","Interazioni_Attive","Fattori_Intercetta","Modello_Globale_Approvato","Floor_Sig_0.05","CWI_Floor","Median_Sig_0.50","CWI_Median","Ceiling_Sig_0.95","CWI_Ceiling","Numero_Quantili_Plottabili","Formula_Riferimento","NA","NA"
+"Acroloxidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Aeshnidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ameletidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ancylidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Anthomyiidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Apataniidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Aphelocheiridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Asellidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.497,"NO",0.497,"NO",0.497,0,"VAR ~ 1",NA,NA
+"Astacidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Athericidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.4959,"NO",0.4959,"NO",0.4959,0,"VAR ~ 1",NA,NA
+"Baetidae","VEL; DEPTH","","Nessuna","full","NO","NO",0.295,"NO",0.9596,"NO",0.8115,0,"VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB",NA,NA
+"Beraeidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Bithyniidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Blephariceridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Brachycentridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Caenidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4937,"NO",0.4937,"NO",0.4937,0,"VAR ~ 1 + GROUP",NA,NA
+"Calamoceratidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Calopterygidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Cambaridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ceratopogonidae","VEL; DEPTH","","VELGROUP","no_sub","NO","NO",0,"NO",0.9134,"NO",0.9134,0,"VAR ~ 1 + VEL + (VEL):GROUP + GROUP",NA,NA
+"Chironomidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4841,"NO",0.4841,"NO",0.4841,0,"VAR ~ 1 + GROUP",NA,NA
+"Chloroperlidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Coenagrionidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Corbiculidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Cordulegastridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Corixidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Crambidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Culicidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Curculionidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dendrocoelidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dixidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dolichopodidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dreissenidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dryopidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Dugesiidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4814,"NO",0.4814,"NO",0.4814,0,"VAR ~ 1 + GROUP",NA,NA
+"Dytiscidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ecnomidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Elmidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.0473,"NO",0.9691,"NO",0.9691,0,"VAR ~ 1 + exp(VEL) + DEPTH + GROUP",NA,NA
+"Empididae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4948,"NO",0.4948,"NO",0.4948,0,"VAR ~ 1 + GROUP",NA,NA
+"Enchytraeidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ephemerellidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4947,"NO",0.4947,"NO",0.4947,0,"VAR ~ 1 + GROUP",NA,NA
+"Ephemeridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Ephydridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Erpobdellidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.4976,"NO",0.4976,"NO",0.4976,0,"VAR ~ 1",NA,NA
+"Gammaridae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4799,"NO",0.4799,"NO",0.4799,0,"VAR ~ 1 + GROUP",NA,NA
+"Gerridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Glossiphoniidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Glossosomatidae","VEL; DEPTH","","VELGROUP","no","NO","NO",0,"NO",0.9408,"NO",0.9408,0,"VAR ~ 1 + VEL + (VEL):GROUP",NA,NA
+"Goeridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Gomphidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Gyrinidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Haemopidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Haliplidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Haplotaxidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Helophoridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Heptageniidae","VEL; DEPTH","","VELGROUP","no_sub","YES","YES",0.9495,"YES",0.9495,"YES",0.9495,3,"VAR ~ 1 + VEL + (VEL):GROUP + GROUP",NA,NA
+"Hirudinidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydrachnidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydraenidae","VEL; DEPTH","","VELGROUP","no","NO","NO",0,"NO",0.9255,"NO",0.9255,0,"VAR ~ 1 + VEL + (VEL):GROUP",NA,NA
+"Hydridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydrobiidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydrochidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydrometridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydrophilidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Hydropsychidae","VEL; DEPTH","","expVELGROUP","full","NO","NO",0.9659,"NO",0.9662,"NO",0.9662,0,"VAR ~ 1 + exp(VEL) + (exp(VEL)):GROUP + GROUP + SUB",NA,NA
+"Hydroptilidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4971,"NO",0.4971,"NO",0.4971,0,"VAR ~ 1 + GROUP",NA,NA
+"Ichneumonidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Lepidostomatidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Leptoceridae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4907,"NO",0.4907,"NO",0.4907,0,"VAR ~ 1 + GROUP",NA,NA
+"Leptophlebiidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.4718,"NO",0.4718,"NO",0.4718,0,"VAR ~ 1",NA,NA
+"Lestidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Leuctridae","VEL; DEPTH","","VELGROUP","no_sub","NO","NO",0.6401,"NO",0.9476,"NO",0.9476,0,"VAR ~ 1 + VEL + (VEL):GROUP + GROUP",NA,NA
+"Libellulidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Limnephilidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4945,"NO",0.4945,"NO",0.4945,0,"VAR ~ 1 + GROUP",NA,NA
+"Limoniidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4941,"NO",0.4941,"NO",0.4941,0,"VAR ~ 1 + GROUP",NA,NA
+"Lumbricidae","VEL; DEPTH","","log10DEPTHGROUP","no","NO","NO",0,"NO",0.9877,"NO",0.9877,0,"VAR ~ 1 + log10(DEPTH) + (log10(DEPTH)):GROUP",NA,NA
+"Lumbriculidae","VEL; DEPTH","","Nessuna","no_group","NO","NO",0.4948,"NO",0.4948,"NO",0.4948,0,"VAR ~ 1 + SUB",NA,NA
+"Lymnaeidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4845,"NO",0.4845,"NO",0.4845,0,"VAR ~ 1 + GROUP",NA,NA
+"Melanopsidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Mesoveliidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Muscidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Naididae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4945,"NO",0.4945,"NO",0.4945,0,"VAR ~ 1 + GROUP",NA,NA
+"Nemouridae","VEL; DEPTH","","VELGROUP","no_sub","NO","NO",0,"NO",0.9693,"NO",0.9693,0,"VAR ~ 1 + VEL + (VEL):GROUP + GROUP",NA,NA
+"Nepidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Neritidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Odontoceridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Oligoneuriidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Pediciidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Perlidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Perlodidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Philopotamidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Phryganeidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Physidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.4943,"NO",0.4943,"NO",0.4943,0,"VAR ~ 1",NA,NA
+"Piscicolidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Planariidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Planorbidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Platycnemididae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Polycentropodidae","VEL; DEPTH","","log10DEPTHGROUP","no_sub","NO","NO",0.9164,"NO",0.7705,"NO",0.9164,0,"VAR ~ 1 + log10(DEPTH) + (log10(DEPTH)):GROUP + GROUP",NA,NA
+"Potamanthidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Prosopistomatidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Psephenidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Psychodidae","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4849,"NO",0.4849,"NO",0.4849,0,"VAR ~ 1 + GROUP",NA,NA
+"Psychomyiidae","VEL; DEPTH","","DEPTHGROUP","no_sub","NO","NO",0,"NO",0.9456,"NO",0.9456,0,"VAR ~ 1 + DEPTH + (DEPTH):GROUP + GROUP",NA,NA
+"Ptilocolepidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Pyralidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Rhagionidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Rhyacophilidae","VEL; DEPTH","","VELGROUP","no_sub","NO","NO",0,"NO",0.9065,"NO",0.9065,0,"VAR ~ 1 + VEL + (VEL):GROUP + GROUP",NA,NA
+"Sciomyzidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Scirtidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Sericostomatidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.483,"NO",0.483,"NO",0.483,0,"VAR ~ 1",NA,NA
+"Sialidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Simuliidae","VEL; DEPTH","","Nessuna","full","NO","NO",0.0421,"NO",0.9626,"NO",0.9626,0,"VAR ~ 1 + exp(VEL) + exp(DEPTH) + GROUP + SUB",NA,NA
+"Siphlonuridae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Sphaeriidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.4854,"NO",0.4854,"NO",0.4854,0,"VAR ~ 1",NA,NA
+"Stratiomyidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Tabanidae","VEL; DEPTH","","Nessuna","no","NO","NO",0.496,"NO",0.496,"NO",0.496,0,"VAR ~ 1",NA,NA
+"Taeniopterygidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Thaumaleidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Tipulidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Tubificidae","VEL; DEPTH","","Nessuna","no_group","NO","NO",0.4961,"NO",0.4961,"NO",0.4961,0,"VAR ~ 1 + SUB",NA,NA
+"Valvatidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Veliidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"Viviparidae","N/A","N/A","N/A","N/A","Esclusa (Troppi Zeri)",NA,NA,NA,NA,NA,NA,0,NA,NA,NA
+"RICHNESS","VEL; DEPTH","","Nessuna","no_sub","YES","YES",0.9836,"YES",0.9853,"YES",0.9853,3,"VAR ~ 1 + exp(VEL) + DEPTH + GROUP",NA,NA
+"EPT","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.8736,"NO",0.8832,"NO",0.8832,0,"VAR ~ 1 + log10(VEL) + exp(DEPTH) + GROUP",NA,NA
+"EPT_prop","VEL; DEPTH","","Nessuna","full","YES","NO",0.8844,"YES",0.9766,"YES",0.9766,2,"VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB",NA,NA
+"EPT_abu","VEL; DEPTH","","Nessuna","full","YES","YES",0.9351,"YES",0.9351,"YES",0.9351,3,"VAR ~ 1 + poly(VEL, 2) + DEPTH + GROUP + SUB",NA,NA
+"OCH","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4968,"NO",0.4968,"NO",0.4968,0,"VAR ~ 1 + GROUP",NA,NA
+"OCH_prop","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.1756,"NO",0.9256,"NO",0.611,0,"VAR ~ 1 + log10(DEPTH) + GROUP",NA,NA
+"OCH_abu","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.0455,"NO",0.9328,"NO",0.9328,0,"VAR ~ 1 + exp(VEL) + DEPTH + GROUP",NA,NA
+"EPT_EPTOCH","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.473,"NO",0.473,"NO",0.473,0,"VAR ~ 1 + GROUP",NA,NA
+"ABUNDANCE","VEL; DEPTH","","log10VELGROUP","no_sub","YES","YES",0.9452,"YES",0.9452,"YES",0.9452,3,"VAR ~ 1 + log10(VEL) + DEPTH + (log10(VEL)):GROUP + GROUP",NA,NA
+"SHANNON","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.365,"NO",0.905,"NO",0.9691,0,"VAR ~ 1 + exp(DEPTH) + GROUP",NA,NA
+"ASPT","VEL; DEPTH","","Nessuna","no_sub","YES","YES",0.9666,"YES",0.9679,"YES",0.9679,3,"VAR ~ 1 + poly(DEPTH, 2) + GROUP",NA,NA
+"LIFE","VEL; DEPTH","","Nessuna","no_sub","YES","YES",0.9298,"YES",0.9298,"YES",0.9298,3,"VAR ~ 1 + poly(VEL, 2) + poly(DEPTH, 2) + GROUP",NA,NA
+"FUN_RICHNESS_ALL","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4653,"NO",0.4653,"NO",0.4653,0,"VAR ~ 1 + GROUP",NA,NA
+"FUN_DIVERSITY_ALL","VEL; DEPTH","","Nessuna","full","NO","NO",0.6302,"NO",0.9502,"NO",0.9761,0,"VAR ~ 1 + VEL + GROUP + SUB",NA,NA
+"FUN_RICHNESS_ECO","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4701,"NO",0.4701,"NO",0.4701,0,"VAR ~ 1 + GROUP",NA,NA
+"FUN_DIVERSITY_ECO","VEL; DEPTH","","Nessuna","full","NO","NO",0.5087,"NO",0.9387,"NO",0.9624,0,"VAR ~ 1 + VEL + GROUP + SUB",NA,NA
+"FUN_RICHNESS_BIO","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4932,"NO",0.4932,"NO",0.4932,0,"VAR ~ 1 + GROUP",NA,NA
+"FUN_DIVERSITY_BIO","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4885,"NO",0.4885,"NO",0.4885,0,"VAR ~ 1 + GROUP",NA,NA
+"logit_EPT_prop","VEL; DEPTH","","Nessuna","full","YES","YES",0.9571,"YES",0.9571,"YES",0.9571,3,"VAR ~ 1 + poly(VEL, 2) + log10(DEPTH) + GROUP + SUB",NA,NA
+"logit_OCH_prop","VEL; DEPTH","","Nessuna","full","NO","NO",0.1661,"NO",0.9259,"NO",0.4119,0,"VAR ~ 1 + DEPTH + GROUP + SUB",NA,NA
+"logit_EPT_EPTOCH","VEL; DEPTH","","Nessuna","no_sub","NO","NO",0.4818,"NO",0.4818,"NO",0.4818,0,"VAR ~ 1 + GROUP",NA,NA
