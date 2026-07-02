@@ -210,10 +210,6 @@ lst <- c(lst, list(...))
 
 #FUNCTION TO COMPUTE AICC
 aicc<-function(x) AIC(x)+((2*length(coef(x))*(length(coef(x))+1))/(length(resid(x))-length(coef(x))-1))
-lappend <- function (lst, ...){
-lst <- c(lst, list(...))
-  return(lst)
-}
 
 #FUNCTION TO COMPUTE VIF AND VARIABLES SELELCTION
 vif_func<-function(in_frame,thresh=10,trace=T){

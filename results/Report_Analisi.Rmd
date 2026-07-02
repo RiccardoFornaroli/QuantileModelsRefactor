@@ -1,0 +1,26 @@
+---
+title: 'Report Analisi Quantilica'
+output: html_document
+---
+
+## Riepilogo Significatività
+```{r echo=FALSE}
+library(knitr)
+df <- read.csv('results_summary.csv')
+kable(df)
+```
+
+## Grafici Modelli
+```{r echo=FALSE, results='asis'}
+plots <- list.files('../results/plots', pattern = '.png', full.names = TRUE)
+if(length(plots) > 0) {
+  for (p in plots) {
+    nome_grafico <- gsub('Plot_', '', basename(p))
+    nome_grafico <- gsub('.png', '', nome_grafico)
+    cat('\n### ', nome_grafico, '\n')
+    cat('![](', p, '){width=80%}\n\n')
+  }
+} else {
+  cat('Nessun grafico trovato. Percorso cercato:', list.files('../results/plots', full.names=TRUE))
+}
+```
