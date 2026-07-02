@@ -15,7 +15,6 @@ K_FOLDS <- 10
 EPSILON_LOGIT <- 0.001
 VIF_THRESHOLD <- 1.5
 SIG_THRESHOLD <- 0.750
-# SIG_THRESHOLD <- 0.999
 MIN_NON_ZERO_PROP <- 0.20 # Soglia per esclusione
 
 # Definizione dei Quantili (Taus)
